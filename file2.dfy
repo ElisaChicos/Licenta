@@ -40,25 +40,22 @@ predicate INV(copie: int, nr: int, s1: int, s5: int, s10:int)
 
 
 method findMax(nr: int) returns(s:int)
-  requires nr>0
-    ensures 0<s <= nr
-    ensures s == 1 || s==5 || s==10
-    ensures s==1 ==> nr< 5
+  requires nr > 0
+  ensures 0 < s <= nr
+  ensures s == 1 || s == 5 || s == 10
+  ensures s == 1 ==> nr < 5
   
 {
-  var a := new int[3];
-  a[0], a[1], a[2] := 1, 5, 10;
-  s := a[0];
-  var i:= 1;
-  //3 if 
-  while (i<a.Length && a[i] <= nr)
-    invariant 0 <= i <= a.Length
-    invariant 0<s<=nr
-    invariant s == 1 || s==5 || s==10
-  {
-    s := a[i];
-    i := i + 1;
+  if(nr >= 10){
+    s := 10;
   }
+  if(nr >= 5){
+    s := 5;
+  }
+  if(nr < 5){
+    s := 1; 
+  }
+  
 }
 
 
@@ -118,7 +115,7 @@ lemma caz3(copie: int,nr: int,s1: int,s5: int,s10: int)
         var i := 0;
         var s := findMax(copie);
         if( s == 1){
-          caz1(copie,nr,s1,s5,s10);
+            caz1(copie,nr,s1,s5,s10);
             s1:=s1+1;
             assert isSol([s1,s5,s10],nr-(copie-1));
             assert INV(copie-1,nr,s1,s5,s10);
@@ -126,13 +123,14 @@ lemma caz3(copie: int,nr: int,s1: int,s5: int,s10: int)
         else{
             if(s == 5)
             {
+                caz2(copie,nr,s1,s5,s10);
                 s5:=s5+1;
                 assert isSol([s1,s5,s10],nr-(copie-5));
-              
                 assert INV(copie-5,nr,s1,s5,s10);
 
             }
             else{
+                caz3(copie,nr,s1,s5,s10);
                 s10:=s10+1;
                 assert isSol([s1,s5,s10],nr-(copie-10));
                 assert INV(copie-10,nr,s1,s5,s10);
