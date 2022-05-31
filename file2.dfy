@@ -48,7 +48,7 @@ method findMax(nr: int) returns(s:int)
   ensures s == 1 || s == 5 || s == 10
   ensures s == 1 ==> nr < 5
   ensures s == 5 ==> nr >= 5
-  ensures s == 10 ==> nr >=10
+  ensures s == 10 ==> nr >= 10
   
 {
   if(nr >= 10){
@@ -111,14 +111,12 @@ lemma caz2(copie: int,nr: int,s1: int,s5: int,s10: int)
   {
     assert isSol([s1',s5',s10'],copie-5);
     assert isSol([s1',s5'+1,s10'],copie);
-
     assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',copie-5) 
           ==> cost(sol') >= cost([s1',s5',s10']);
     assert isSol([s1+s1',s5+s5'+1,s10+s10'],nr);
     assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr) 
           ==> cost(sol') >= cost([s1+s1',s5+s5'+1,s10+s10']);
   }
-
   assert forall s1', s5', s10' :: s1'>=0 && s5'>=0 && s10'>=0 
           && isOptSol([s1',s5',s10'],copie-5) ==> 
           isOptSol([s1+s1',s5+s5'+1,s10+s10'],nr);
