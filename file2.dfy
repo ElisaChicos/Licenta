@@ -96,6 +96,17 @@ lemma caz1(copie: int, nr: int, s1: int, s5: int, s10: int)
 
 }
 
+lemma exchangeArgument(nr: int,s1: int,s5: int,s10: int)
+  requires nr >= 0  
+  requires s1 >= 0
+  requires s5 >= 0
+  requires s10 >= 0
+  requires isSol([s1,s5,s10],nr)
+  ensures forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr) 
+          ==> cost(sol') >= cost([s1,s5,s10]);
+{
+}
+
 lemma caz2(copie: int,nr: int,s1: int,s5: int,s10: int)
   requires copie >= 5
   requires s1 >= 0
@@ -114,9 +125,24 @@ lemma caz2(copie: int,nr: int,s1: int,s5: int,s10: int)
     assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',copie-5) 
           ==> cost(sol') >= cost([s1',s5',s10']);
     assert isSol([s1+s1',s5+s5'+1,s10+s10'],nr);
-    assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr) 
+
+    forall sol' | |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0
+      ensures isSol(sol',nr)
+    {
+      exchangeArgument(nr,s1+s1',s5+s5'+1,s10+s10');
+        if (cost(sol') < cost([s1+s1',s5+s5'+1,s10+s10']))
+      {
+        assume false;
+      }
+
+    }
+    
+    assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr)
           ==> cost(sol') >= cost([s1+s1',s5+s5'+1,s10+s10']);
   }
+
+
+
   assert forall s1', s5', s10' :: s1'>=0 && s5'>=0 && s10'>=0 
           && isOptSol([s1',s5',s10'],copie-5) ==> 
           isOptSol([s1+s1',s5+s5'+1,s10+s10'],nr);
