@@ -47,18 +47,23 @@ method findMax(nr: int) returns(s:int)
   ensures 0 < s <= nr
   ensures s == 1 || s == 5 || s == 10
   ensures s == 1 ==> nr < 5
-  ensures s == 5 ==> nr >= 5
+  ensures s == 5 ==> 5 <= nr < 10
   ensures s == 10 ==> nr >= 10
   
 {
   if(nr >= 10){
     s := 10;
   }
-  if(nr >= 5){
+  else
+  {
+    if(nr >= 5){
     s := 5;
   }
-  if(nr < 5){
-    s := 1; 
+    else{
+       if(nr < 5){
+        s := 1; 
+        }
+    }
   }
   
 }
@@ -96,19 +101,20 @@ lemma caz1(copie: int, nr: int, s1: int, s5: int, s10: int)
 
 }
 
-lemma exchangeArgument(nr: int,s1: int,s5: int,s10: int)
-  requires nr >= 0  
-  requires s1 >= 0
-  requires s5 >= 0
-  requires s10 >= 0
-  requires isSol([s1,s5,s10],nr)
-  ensures forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr) 
-          ==> cost(sol') >= cost([s1,s5,s10]);
-{
-}
+// lemma exchangeArgument(nr: int,s1: int,s5: int,s10: int)
+//   requires nr >= 0  
+//   requires s1 >= 0
+//   requires s5 >= 0
+//   requires s10 >= 0
+//   requires isSol([s1,s5,s10],nr)
+//   ensures forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 ==> isSol(sol',nr)
+//   ensures forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr)
+//           ==> cost(sol') >= cost([s1,s5,s10])
+// {
+// }
 
 lemma caz2(copie: int,nr: int,s1: int,s5: int,s10: int)
-  requires copie >= 5
+  requires 5 <= copie < 10 
   requires s1 >= 0
   requires s5 >= 0
   requires s10 >= 0
@@ -126,27 +132,57 @@ lemma caz2(copie: int,nr: int,s1: int,s5: int,s10: int)
           ==> cost(sol') >= cost([s1',s5',s10']);
     assert isSol([s1+s1',s5+s5'+1,s10+s10'],nr);
 
-    forall sol' | |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0
-      ensures isSol(sol',nr)
-    {
-      exchangeArgument(nr,s1+s1',s5+s5'+1,s10+s10');
-        if (cost(sol') < cost([s1+s1',s5+s5'+1,s10+s10']))
-      {
-        assume false;
-      }
+    // forall sol' | |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0
+    //   ensures isSol(sol',nr)
+    // {
+    //     exchangeArgument(nr,s1+s1',s5+s5'+1,s10+s10');
+    //     if (cost(sol') < cost([s1+s1',s5+s5'+1,s10+s10']))
+    //   {
+    //     assume false;
+    //   }
 
-    }
+    // }
     
     assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr)
           ==> cost(sol') >= cost([s1+s1',s5+s5'+1,s10+s10']);
   }
 
-
-
   assert forall s1', s5', s10' :: s1'>=0 && s5'>=0 && s10'>=0 
           && isOptSol([s1',s5',s10'],copie-5) ==> 
           isOptSol([s1+s1',s5+s5'+1,s10+s10'],nr);
 
+}
+
+lemma solCopie(copie:int,nr: int, s1': int, s5' :int, s10':int)
+  requires s1' >= 0
+  requires s5' >= 0
+  requires s10' >= 0
+  requires copie >=10
+  requires isSol([s1',s5',s10'],copie-10)
+  requires isOptSol([s1',s5',s10'],copie-10)
+  ensures isOptSol([s1',s5',s10'+1],copie)
+{
+}
+
+lemma aux(copie: int ,nr: int, sol' : seq<int>, s1 : int, s1' : int, s5 : int, s5' : int, s10 : int, s10':int)
+  requires |sol'| == 3
+  requires sol'[0]>=0
+  requires sol'[1]>=0
+  requires sol'[2]>=0
+  requires s1 >= 0
+  requires s5 >= 0
+  requires s10 >= 0
+  requires s1' >= 0 
+  requires s5' >= 0
+  requires s10' >= 0
+  requires copie >= 10 
+  requires isOptSol([s1',s5',s10'],copie-10)
+  requires isSol([s1+s1',s5+s5',s10+s10'+1],nr)
+  requires isSol(sol',nr)
+  requires INV(copie,nr,s1,s5,s10)
+  ensures cost(sol') >= cost([s1+s1',s5+s5',s10+s10'+1])
+{
+  solCopie(copie,nr,s1', s5', s10');
 }
 
 lemma caz3(copie: int,nr: int,s1: int,s5: int,s10: int)
@@ -157,25 +193,57 @@ lemma caz3(copie: int,nr: int,s1: int,s5: int,s10: int)
   requires INV(copie,nr,s1,s5,s10)
   ensures INV(copie-10,nr,s1,s5,s10+1)
 {
-  assume false;
-  // forall s1', s5', s10' | s1'>=0 && s5'>=0 && s10'>=0 
-  //         && isOptSol([s1',s5',s10'],copie-10) 
-  //         ensures isOptSol([s1+s1',s5+s5',s10+s10'+1],nr)
-  // {
-  //   assert isSol([s1',s5',s10'],copie-10);
-  //   assert isSol([s1',s5',s10'+1],copie);
+  assert forall s1', s5', s10' :: s1'>=0 && s5'>=0 && s10'>=0 ==>
+          (isSol([s1',s5',s10'],copie) ==> 
+          isSol([s1+s1',s5+s5',s10+s10'],nr));
 
-  //   assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 
-  //         && isSol(sol',copie-10) 
-  //         ==> cost(sol') >= cost([s1',s5',s10']);
-  //   assert isSol([s1+s1',s5+s5',s10+s10'+1],nr);
-  //   assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr) 
-  //         ==> cost(sol') >= cost([s1+s1',s5+s5',s10+s10'+1]);
-  // }
+   forall s1', s5', s10' | s1'>=0 && s5'>=0 && s10'>=0 
+          && isSol([s1',s5',s10'],copie-10) 
+          ensures isSol([s1+s1',s5+s5',s10+s10'+1],nr)
+   {
+     assert isSol([s1',s5',s10'+1],copie);
+   }
+  
 
-  // assert forall s1', s5', s10' :: s1'>=0 && s5'>=0 && s10'>=0 
-  //         && isOptSol([s1',s5',s10'],copie-10) ==> 
-  //         isOptSol([s1+s1',s5+s5',s10+s10'+1],nr);
+  forall s1', s5', s10' | s1'>=0 && s5'>=0 && s10'>=0 
+          && isOptSol([s1',s5',s10'],copie-10) 
+          ensures isOptSol([s1+s1',s5+s5',s10+s10'+1],nr)
+  {
+
+    assert isSol([s1',s5',s10'],copie-10);
+    assert isSol([s1',s5',s10'+1],copie);
+
+    assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 
+          && isSol(sol',copie-10) 
+          ==> cost(sol') >= cost([s1',s5',s10']);
+
+
+    assert isSol([s1+s1',s5+s5',s10+s10'+1],nr);
+
+    forall sol' | |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr)
+      ensures cost(sol') >= cost([s1+s1',s5+s5',s10+s10'+1])
+      {
+          aux(copie, nr, sol', s1, s1', s5, s5', s10, s10');
+      }
+   
+    assert forall sol' :: |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',nr) 
+          ==> cost(sol') >= cost([s1+s1',s5+s5',s10+s10'+1]);
+  }
+
+
+  assert forall s1', s5', s10' :: s1'>=0 && s5'>=0 && s10'>=0 
+          && isOptSol([s1',s5',s10'],copie-10) ==> 
+          isOptSol([s1+s1',s5+s5',s10+s10'+1],nr);
+
+  assert forall s1', s5', s10' :: s1'>=0 && s5'>=0 && s10'>=0 ==>
+          (isSol([s1',s5',s10'],copie-10) ==> 
+          isSol([s1+s1',s5+s5',s10+s10'+1],nr));
+  
+  assert forall s1', s5', s10' :: s1'>=0 && s5'>=0 && s10'>=0 ==>        
+          (isOptSol([s1',s5',s10'],copie-10) ==> 
+          isOptSol([s1+s1',s5+s5',s10+s10'+1],nr));
+
+  assert  INV(copie-10,nr,s1,s5,s10+1);
 }
 
 
@@ -188,6 +256,7 @@ lemma caz3(copie: int,nr: int,s1: int,s5: int,s10: int)
     ensures isSol(sol,nr)
     ensures isOptSol(sol,nr)
 {
+
     var copie:=  nr;
     var s1 := 0;
     var s5 := 0;
@@ -226,9 +295,9 @@ lemma caz3(copie: int,nr: int,s1: int,s5: int,s10: int)
         copie := copie-s;
     }
     sol := [s1,s5,s10];
-  }
+}
 
-  
+
 method Main() {
   var nr:= 38;
   var sol:=bancnote(nr);
