@@ -153,7 +153,89 @@ lemma caz2(copie: int,nr: int,s1: int,s5: int,s10: int)
 
 }
 
-lemma solCopie(copie:int,nr: int, s1': int, s5' :int, s10':int)
+
+lemma B(copie:int,nr: int,sol' : seq<int>, s1': int, s5' :int, s10':int)
+  requires |sol'| == 3
+  requires sol'[0]>=0
+  requires sol'[1]>=0
+  requires sol'[2]>=0
+  requires s1' >= 0
+  requires s5' >= 0
+  requires s10' >= 0
+  requires copie >=10
+  requires isSol(sol',copie)
+  requires isSol([s1',s5',s10'],copie-10)
+  requires isOptSol([s1',s5',s10'],copie-10)
+  ensures cost(sol') >= cost([s1',s5',(s10'+1)])
+  decreases sol'[0],sol'[1]
+{
+  assert isSol(sol',copie);
+  assert isSol([s1',s5',(s10'+1)],copie);
+
+  if(cost(sol') < cost([s1',s5',(s10'+1)]))
+  {
+    if(sol'[2] > (s10'+1))
+    {
+      assert cost([sol'[0],sol'[1],(sol'[2]-1)]) < cost([s1',s5',s10']);
+      assert isOptSol([sol'[0],sol'[1],(sol'[2]-1)],(copie-10));
+      assert false;
+    }
+    else
+    {
+      if(sol'[2]<s10'+1)
+      {
+        assert (sol'[0]+(5*sol'[1]))>10;
+
+        if(sol'[0]>=10)
+        {
+          var sol'' := [sol'[0]-10,sol'[1],sol'[2]+1];
+          B(copie,nr,sol'', s1', s5', s10');
+        }
+        else{
+          if(sol'[1]>=2){
+            var sol'' := [sol'[0],sol'[1]-2,sol'[2]+1];
+             B(copie,nr,sol'', s1', s5', s10');
+          }
+          else
+          {
+            var sol'' := [sol'[0]-5,sol'[1]-1,sol'[2]+1];
+             B(copie,nr,sol'', s1', s5', s10');
+          }
+        }
+      }
+    }
+    assert sol'[2] == (s10'+1);
+
+    if(sol'[1]>s5')
+    {
+      assert cost([sol'[0],sol'[1],(sol'[2]-1)]) < cost([s1',s5',s10']);
+      assert false;
+    }
+    else
+    {
+      if(sol'[1]<s5')
+      {
+        assert sol'[0]>=5;
+      
+          var sol'' := [sol'[0]-5,sol'[1]+1,sol'[2]];
+          B(copie, nr, sol'', s1', s5', s10');
+        
+      }
+    }
+
+    assert sol'[1] == s5';
+
+    assert sol'[0]==s1';
+    
+    assert false;
+  }
+}
+
+lemma solCopie(copie:int,nr: int,sol':seq<int>, s1': int, s5' :int, s10':int)
+  requires |sol'| == 3
+  requires sol'[0]>=0
+  requires sol'[1]>=0
+  requires sol'[2]>=0
   requires s1' >= 0
   requires s5' >= 0
   requires s10' >= 0
@@ -162,6 +244,12 @@ lemma solCopie(copie:int,nr: int, s1': int, s5' :int, s10':int)
   requires isOptSol([s1',s5',s10'],copie-10)
   ensures isOptSol([s1',s5',s10'+1],copie)
 {
+  forall sol' | |sol'| == 3 && sol'[0]>=0 && sol'[1]>=0 && sol'[2]>=0 && isSol(sol',copie)
+    ensures cost(sol')>=cost([s1',s5',(s10'+1)])
+  {
+    B(copie,nr, sol' ,s1', s5',s10');
+  }
+  
 }
 
 lemma aux(copie: int ,nr: int, sol' : seq<int>, s1 : int, s1' : int, s5 : int, s5' : int, s10 : int, s10':int)
@@ -182,7 +270,7 @@ lemma aux(copie: int ,nr: int, sol' : seq<int>, s1 : int, s1' : int, s5 : int, s
   requires INV(copie,nr,s1,s5,s10)
   ensures cost(sol') >= cost([s1+s1',s5+s5',s10+s10'+1])
 {
-  solCopie(copie,nr,s1', s5', s10');
+  solCopie(copie,nr,sol',s1', s5', s10');
 }
 
 lemma caz3(copie: int,nr: int,s1: int,s5: int,s10: int)
