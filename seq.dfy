@@ -307,9 +307,9 @@ lemma cazMaxim10(copie: int,nr: int, solutieFinala : seq<int>)
           aux(copie, nr, solutieOarecare, solutieFinala, solutieCurenta);
       }
 
-    // assert forall solutieOarecare :: |solutieOarecare| == 3 && solutieOarecare[0]>=0 && solutieOarecare[1]>=0 && solutieOarecare[2]>=0
-    //          && esteSolutie(solutieOarecare,nr) 
-    //       ==> cost(solutieOarecare) >= cost([solutieFinala[0]+solutieCurenta[0],solutieFinala[1]+solutieCurenta[2],(solutieFinala[2]+solutieCurenta[2]+1)]);
+    assert forall solutieOarecare :: |solutieOarecare| == 3 && solutieOarecare[0]>=0 && solutieOarecare[1]>=0 && solutieOarecare[2]>=0
+             && esteSolutie(solutieOarecare,nr) 
+          ==> cost(solutieOarecare) >= cost([solutieFinala[0]+solutieCurenta[0],solutieFinala[1]+solutieCurenta[1],(solutieFinala[2]+solutieCurenta[2]+1)]);
   }
 
 
