@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.3) (preloaded format=pdflatex 2022.6.14)  14 JUN 2022 15:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.3) (preloaded format=pdflatex 2022.6.14)  14 JUN 2022 22:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -409,15 +409,15 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 Capitolul 1.
 ) (chapters/chapter2.tex [5
 
-] [6]
+]
 Capitolul 2.
-[7
+[6
 
-]) (chapters/chapter3.tex [8]
+]) (chapters/chapter3.tex [7]
 Capitolul 3.
-[9
+[8
 
-]) (chapters/conclusions.tex [10]) (chapters/bibliography.tex [11
+]) (chapters/conclusions.tex [9]) (chapters/bibliography.tex [10
 
 ]
 LaTeX Font Info:    Trying to load font information for TS1+ppl on input line 5
@@ -425,21 +425,15 @@ LaTeX Font Info:    Trying to load font information for TS1+ppl on input line 5
 
 (E:\Programe\MiKTeX\tex/latex/psnfss\ts1ppl.fd
 File: ts1ppl.fd 2001/06/04 font definitions for TS1/ppl.
-)) [12
+)) [11
 
 ] (main.aux)
-
-Package rerunfilecheck Warning: File `main.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: FB02343904D92925139BCDCEE5DA9E81;2154
-(rerunfilecheck)             After:  607D59BB726BA005055632AFA7FCE80B;2116.
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 45E78022E4F91B1C49135525FC95F86B;2197.
  ) 
 Here is how much of TeX's memory you used:
- 9937 strings out of 478582
- 159100 string characters out of 2856538
+ 9936 strings out of 478582
+ 159093 string characters out of 2856538
  473557 words of memory out of 3000000
  27909 multiletter control sequences out of 15000+600000
  492647 words of font info for 83 fonts, out of 8000000 for 9000
@@ -448,9 +442,9 @@ Here is how much of TeX's memory you used:
 {E:/Programe/MiKTeX/fonts/enc/dvips/base/8r.enc}<E:/Programe/MiKTeX/fonts/typ
 e1/urw/palatino/uplb8a.pfb><E:/Programe/MiKTeX/fonts/type1/urw/palatino/uplr8a.
 pfb><E:/Programe/MiKTeX/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (16 pages, 97279 bytes).
+Output written on main.pdf (15 pages, 97106 bytes).
 PDF statistics:
- 177 PDF objects out of 1000 (max. 8388607)
- 34 named destinations out of 1000 (max. 500000)
+ 173 PDF objects out of 1000 (max. 8388607)
+ 33 named destinations out of 1000 (max. 500000)
  126 words of extra memory for PDF output out of 10000 (max. 10000000)
 
