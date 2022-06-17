@@ -676,17 +676,15 @@ lemma B(copie:int,nr: int,solutieOarecare : seq<int>, solutieCurenta: seq<int>)
           assert solutieOarecare[1]>=0;
           assert solutieOarecare[2]>=0;
           assert solutieOarecare[3]>=3;
-          if(solutieOarecare[3]>=5)
+          if(solutieOarecare[3]>=3)
           {
-            var nouaSolutieOarecare := [solutieOarecare[0],solutieOarecare[1],solutieOarecare[2],solutieOarecare[3]-5,solutieOarecare[4]+2];
+            var nouaSolutieOarecare := [solutieOarecare[0],solutieOarecare[1],solutieOarecare[2]+1,solutieOarecare[3]-3,solutieOarecare[4]+1];
             assert cost(nouaSolutieOarecare) < cost(solutieOarecare);
             B(copie, nr, nouaSolutieOarecare, solutieCurenta);
           }
       }
-
-      
     }
-    
+
     assert solutieOarecare[4]==(solutieCurenta[4]+1);
 
 
