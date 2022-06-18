@@ -1,15 +1,87 @@
 \chapter{Paradigma Greedy}
- Greedy este o strategie de rezolvare a problemelor de optimizare. Metoda presupune luarea unei decizii la fiecare pas in functie de informatiile cunoscute in prezent fara a ne ingrijora de efectul acesteia in viitor. \par
- In functie de decizia facuta, vom crea solutii posibile.  O solutie posibila este o submultime care satisface cerintele problemei, in timp ce o solutie optima respecta cerintele date si are cost minim sau castig maxim. Dacă mai multe soluții îndeplinesc criteriile date, atunci acele soluții vor fi considerate ca fiind posibile, în timp ce soluția optimă este cea mai bună dintre toate soluțiile.
- Drept urmare, aceasta metoda este folosita pentru a determina daca o solutie posibila la problema noastra poate fi optima sau nu.
-
-\section{Ce este o problema de optimizare?}
-O problema de optimizare este o problema 
+ Greedy este o strategie de rezolvare a problemelor de optimizare. Metoda presupune luarea unei decizii definitive la fiecare pas in functie de informatiile cunoscute in prezent fara a ne ingrijora de efectul acesteia in viitor.
 
 
+\section{Ce este o problema de optimizare si cum lucreaza metoda Greedy cu aceasta?}
+
+O problema de optimizare este o problema care are un input oarecare dar output-ul ei trebuie sa fie o valoare maxima sau minima.
+In functie de ce ne cere problema, aceasta poate fi de doua feluri: 
+\begin{enumerate}
+\item Problema de minimizare 
+\par
+\fbox{\parbox{5.5in}{Please make sure you send in your 
+		completed forms by January 1st next year, or the 
+		penalty clause 2(a) will apply.}}
+\par
+ %Scopul acestei probleme este de a gasi valoarea care rezolva problema si are cost minim
+\item Problema de maximizare
+\par
+ \fbox{\parbox{5.5in}{Please make sure you send in your 
+ 		completed forms by January 1st next year, or the 
+ 		penalty clause 2(a) will apply.}}
+\end{enumerate}
+
+ In functie de decizia facuta de metoda Greedy, vom crea solutii posibile. O solutie posibila este o submultime care satisface cerintele problemei, in timp ce o solutie optima respecta cerintele date si are cost minim sau castig maxim.
+  \par 
+  Dacă mai multe soluții îndeplinesc criteriile date, atunci acele soluții vor fi considerate ca fiind posibile, in timp ce solutia optima este cea mai buna dintre toate solutiile.
+  \par 
+  Drept urmare, aceasta metoda este folosita pentru a determina
+  solutia oprima si a rezolva corect problema de optimizare.
+
+
+\section{Algoritmi Greedy}
+	\subsection{Problema selectiei activitatilor}	
+	Problema activitatilor este o problema de maximizare care presupune alegerea cat mai multor activitati care pot fi realizate intr-un anumit interval de timp fara ca acestea sa se suprapuna.
+\vspace{0.5cm}
+\par	 
+O posibila formulare a acestei probleme este: \par
+\fbox{\parbox{5.5in}
+	{
+		\setlength{\parindent}{0em}
+		Input: \par
+		\setlength{\parindent}{2em}
+		$\bullet$ n - numarul de activitati,
+		 \par 
+		
+		$\bullet$ aStart[0..n-1] - vector care contine timpul la care incep activitatile, 
+		 \par
+		 $\bullet$ aSfarsit[0..n-1] - vector ce contine timpul la care se termina actvitatile \par astfel incat aStart[i] $<$ aSfarsit[i] pentru orice 0 $\leq$ i $\leq$ n-1
+		 \setlength{\parindent}{0em}
+		 \par
+		 Output:\par
+		 \setlength{\parindent}{2em}
+		  $\bullet$ A $\subseteq$ $\{$ 0, ..., n-1 $\}$, unde A este o multime de activitati care nu se\par suprapun si este de cardinal maxim;
+	}}
+
+\par
+\vspace{1cm}
+Spre exmplu putem avea aceste multimi de activitati reprezentate in tabelul de mai jos:
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{||c c c c||} 
+		\hline
+		Nr & Activitate & Inceput & Final \\ [1ex] 
+		\hline\hline
+		1 & Curs ML & 8 & 10\\ \hline
+		2 & Seminar AI & 10 & 12 \\\hline
+		3 & Curs Pian & 11 & 1 \\\hline
+		4 & Antrenament Inot & 12 & 17 \\ \hline
+		5 & Curs CN & 16 & 18 \\\hline
+		6 & Consultatii RPA & 17 & 19 \\ \hline
+		7 & Laborator CN & 18 & 20 \\ [1ex] 
+		\hline
+	\end{tabular}
+\end{table}
+\par
+Solutia optima este $A = \{1, 2, 4, 6  \} $
+
+
+\subsection{Problema Codurilor Huffman}
+\subsection{Problema Bin-packing}
+\subsection{Algoritmul Dijkstra}
+\subsection{Problema arborelui partial de cost minim}
+
+\section{Avantaje si dezavantaje ale algoritmilor Greedy}				
 
 
 
-\section{Titlul secțiunii 2}
-
-Pellentesque pulvinar pellentesque habitant morbi tristique senectus et. Ornare suspendisse sed nisi lacus sed viverra tellus in hac. Non sodales neque sodales ut etiam sit. In hendrerit gravida rutrum quisque non. Diam quam nulla porttitor massa id neque aliquam. Diam sit amet nisl suscipit adipiscing bibendum est ultricies integer. Cras fermentum odio eu feugiat pretium nibh ipsum. Egestas integer eget aliquet nibh praesent tristique magna. Porttitor eget dolor morbi non arcu risus quis varius quam. Gravida rutrum quisque non tellus orci. Diam volutpat commodo sed egestas egestas.
