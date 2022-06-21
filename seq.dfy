@@ -3,10 +3,10 @@ predicate esteSolutieValida(solutie : seq<int>)
   |solutie| == 5 && solutie[0] >= 0 && solutie[1] >= 0 && solutie[2] >= 0 && solutie[3] >=0 && solutie[4] >=0
 }
 
-predicate esteSolutie(solutie : seq<int>, nr : int)
+predicate esteSolutie(solutie : seq<int>, suma : int)
   requires esteSolutieValida(solutie)
 {
-    solutie[0] * 1 + solutie[1] * 5 + solutie[2] * 10 + solutie[3] * 20 + solutie[4] * 50 == nr
+    solutie[0] * 1 + solutie[1] * 5 + solutie[2] * 10 + solutie[3] * 20 + solutie[4] * 50 == suma
 
 }
 
@@ -17,141 +17,143 @@ function cost(solutie : seq<int>) : int
     solutie[0] + solutie[1] + solutie[2] + solutie[3] + solutie[4]
 }
 
-predicate esteSolutieOptima(solutie : seq<int>, nr : int)
+predicate esteSolutieOptima(solutie : seq<int>, suma : int)
     requires esteSolutieValida(solutie)
 {   
-  esteSolutie(solutie, nr) &&
-  forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, nr) 
+  esteSolutie(solutie, suma) &&
+  forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, suma) 
           ==> cost(solutieOarecare) >= cost(solutie)
 
 }
 
-predicate INV(copie : int, nr : int, solutieFinala : seq<int>)
+predicate INV(rest : int, suma : int, solutieFinala : seq<int>)
   requires esteSolutieValida(solutieFinala)
 {
    forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>
-          (esteSolutie(solutieCurenta, copie) ==> 
+          (esteSolutie(solutieCurenta, rest) ==> 
           esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], 
-          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], nr)) &&
-          (esteSolutieOptima(solutieCurenta, copie) ==> 
+          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma)) &&
+          (esteSolutieOptima(solutieCurenta, rest) ==> 
           esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1],
-          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], nr))
+          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma))
 }
 
 
-method gasireMaxim(nr : int) returns(s : int)
-  requires nr > 0
-  ensures 0 < s <= nr
+method gasireMaxim(suma : int) returns(s : int)
+  requires suma > 0
+  ensures 0 < s <= suma
   ensures s == 1 || s == 5 || s == 10 || s == 20 || s == 50
-  ensures s == 1 ==> nr < 5
-  ensures s == 5 ==> 5 <= nr < 10
-  ensures s == 10 ==> 10 <= nr < 20
-  ensures s == 20 ==> 20 <= nr < 50
-  ensures s == 50 ==> nr >= 50
+  ensures s == 1 ==> suma < 5
+  ensures s == 5 ==> 5 <= suma < 10
+  ensures s == 10 ==> 10 <= suma < 20
+  ensures s == 20 ==> 20 <= suma < 50
+  ensures s == 50 ==> suma >= 50
 {
-    if(nr >= 50)
+    if(suma >= 50)
     {
         s := 50 ;
     }
-    else if(nr >= 20)
+    else if(suma >= 20)
     {
         s := 20;
     }
-    else if(nr >= 10)
+    else if(suma >= 10)
     {
         s := 10;
     }
-    else if(nr >= 5)
+    else if(suma >= 5)
     {
         s := 5;
     }
-    else if(nr < 5){
+    else if(suma < 5){
         s := 1; 
     }
 
 }
 
 
-lemma cazMaxim1(copie : int, nr : int, solutieFinala : seq<int>)
-  requires copie < 5
+lemma cazMaxim1(rest : int, suma : int, solutieFinala : seq<int>)
+  requires rest < 5
   requires esteSolutieValida(solutieFinala)
-  requires INV(copie, nr, solutieFinala)
-  ensures INV(copie-1, nr, [solutieFinala[0] + 1, solutieFinala[1], solutieFinala[2], solutieFinala[3], solutieFinala[4]])
+  requires INV(rest, suma, solutieFinala)
+  ensures INV(rest-1, suma, [solutieFinala[0] + 1, solutieFinala[1], solutieFinala[2], solutieFinala[3], solutieFinala[4]])
 {
 
-  forall solutieCurenta | esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, copie - 1) 
+  forall solutieCurenta | esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, rest - 1) 
           ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],
-          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], nr)
+          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma)
   {
-    assert esteSolutie(solutieCurenta, copie - 1);
-    assert esteSolutie([solutieCurenta[0] + 1, solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], solutieCurenta[4]], copie);
+    assert esteSolutie(solutieCurenta, rest - 1);
+    assert esteSolutie([solutieCurenta[0] + 1, solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], solutieCurenta[4]], rest);
 
-    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, copie - 1) 
+    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, rest - 1) 
           ==> cost(solutieOarecare) >= cost(solutieCurenta);
 
     assert esteSolutie([solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],
-          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], nr);
+          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma);
 
-    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) &&  esteSolutie(solutieOarecare, nr) 
+    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) &&  esteSolutie(solutieOarecare, suma) 
           ==> cost(solutieOarecare) >= cost([solutieCurenta[0] + solutieFinala[0] + 1, solutieCurenta[1] + solutieFinala[1],
           solutieCurenta[2] + solutieFinala[2], solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]]);
   }
 
   assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) 
-          && esteSolutieOptima(solutieCurenta, copie - 1) ==> 
+          && esteSolutieOptima(solutieCurenta, rest - 1) ==> 
           esteSolutieOptima([solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],
-          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], nr);
+          solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma);
 
 }
 
-lemma cazMaxim5(copie : int, nr : int, solutieFinala : seq<int>)
-  requires 5 <= copie < 10 
+lemma cazMaxim5(rest : int, suma : int, solutieFinala : seq<int>)
+  requires 5 <= rest < 10 
   requires esteSolutieValida(solutieFinala)
-  requires INV(copie, nr, solutieFinala)
-  ensures INV(copie - 5, nr, [solutieFinala[0], solutieFinala[1] + 1, solutieFinala[2], solutieFinala[3], solutieFinala[4]])
+  requires INV(rest, suma, solutieFinala)
+  ensures INV(rest - 5, suma, [solutieFinala[0], solutieFinala[1] + 1, solutieFinala[2], solutieFinala[3], solutieFinala[4]])
 {
 
- forall solutieCurenta | esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, copie - 5) 
+ forall solutieCurenta | esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, rest - 5) 
           ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1] + 1,
-          solutieCurenta[2] + solutieFinala[2], solutieCurenta[3] + solutieFinala[3], solutieFinala[4]], nr)
+          solutieCurenta[2] + solutieFinala[2], solutieCurenta[3] + solutieFinala[3], solutieFinala[4]], suma)
   {
-    assert esteSolutie(solutieCurenta, copie - 5);
-    assert esteSolutie([solutieCurenta[0], solutieCurenta[1] + 1, solutieCurenta[2], solutieCurenta[3], solutieCurenta[4]], copie);
+    assert esteSolutie(solutieCurenta, rest - 5);
+    assert esteSolutie([solutieCurenta[0], solutieCurenta[1] + 1, solutieCurenta[2], solutieCurenta[3], solutieCurenta[4]], rest);
 
-    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare)  && esteSolutie(solutieOarecare, copie - 5) 
+    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare)  && esteSolutie(solutieOarecare, rest - 5) 
           ==> cost(solutieOarecare) >= cost(solutieCurenta);
     assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1] + 1,
-            solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], nr);
+            solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma);
     
-    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, nr)
+    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, suma)
           ==> cost(solutieOarecare) >= cost([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1] + 1,
           solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]]);
   }
 
-  assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) && esteSolutie(solutieCurenta, copie - 5) ==> 
+  assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) && esteSolutie(solutieCurenta, rest - 5) ==> 
           esteSolutieOptima([solutieCurenta[0] + solutieFinala[0], solutieCurenta[1] + solutieFinala[1] + 1,
-          solutieCurenta[2] + solutieFinala[2], solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]], nr);
+          solutieCurenta[2] + solutieFinala[2], solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]], suma);
 
 }
 
-lemma aux2(copie : int, solutieCurenta : seq<int>)
-  requires 10 <= copie < 20
+
+
+lemma exchangeArgumentCaz10(rest : int, solutieCurenta : seq<int>)
+  requires 10 <= rest < 20
   requires esteSolutieValida(solutieCurenta)
-  requires esteSolutieOptima(solutieCurenta, copie - 10)
-  ensures esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], copie)
+  requires esteSolutieOptima(solutieCurenta, rest - 10)
+  ensures esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], rest)
 {
 
-    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], copie);
-    if(!esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], copie))
+    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], rest);
+    if(!esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], rest))
     {
-      var solutieOptima :|esteSolutieValida(solutieOptima) && esteSolutie(solutieOptima, copie) && cost(solutieOptima)<cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]]);
+      var solutieOptima :|esteSolutieValida(solutieOptima) && esteSolutie(solutieOptima, rest) && cost(solutieOptima)<cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]]);
       assert cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]]) == cost(solutieCurenta) + 1;
       assert solutieOptima[3] == 0;
       assert solutieOptima[4] == 0;
       if(solutieOptima[2] >= 1)
       {
         var solutieOptima' := [solutieOptima[0], solutieOptima[1], solutieOptima[2] - 1, solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 10);
+        assert esteSolutie(solutieOptima', rest - 10);
         assert cost(solutieOptima') == cost(solutieOptima) - 1;
         assert cost(solutieOptima) - 1 < cost(solutieCurenta);
         assert false;
@@ -159,14 +161,14 @@ lemma aux2(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[1] >= 2)
       {
         var solutieOptima' := [solutieOptima[0], solutieOptima[1] - 2, solutieOptima[2], solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 10);
+        assert esteSolutie(solutieOptima', rest - 10);
         assert cost(solutieOptima') == cost(solutieOptima) - 2;
         assert cost(solutieOptima) - 2 < cost(solutieCurenta);
         assert false;
       }else if(solutieOptima[1] >= 1 && solutieOptima[0] >= 5)
       {
         var solutieOptima' := [solutieOptima[0] - 5, solutieOptima[1] - 1, solutieOptima[2], solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 10);
+        assert esteSolutie(solutieOptima', rest - 10);
         assert cost(solutieOptima') == cost(solutieOptima) - 6;
         assert cost(solutieOptima) - 6 < cost(solutieCurenta);
         assert false;
@@ -174,7 +176,7 @@ lemma aux2(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[0] >= 10)
       {
         var solutieOptima' := [solutieOptima[0] - 10, solutieOptima[1], solutieOptima[2], solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 10);
+        assert esteSolutie(solutieOptima', rest - 10);
         assert cost(solutieOptima') == cost(solutieOptima) - 10;
         assert cost(solutieOptima) - 10 < cost(solutieCurenta);
         assert false;
@@ -189,60 +191,60 @@ lemma aux2(copie : int, solutieCurenta : seq<int>)
 
 
 
-lemma cazMaxim10(copie : int, nr : int, solutieFinala : seq<int>)
-  requires 10 <= copie < 20 
+lemma cazMaxim10(rest : int, suma : int, solutieFinala : seq<int>)
+  requires 10 <= rest < 20 
   requires esteSolutieValida(solutieFinala) 
-  requires INV(copie, nr, solutieFinala)
-  ensures INV(copie-10, nr, [solutieFinala[0], solutieFinala[1], solutieFinala[2] + 1, solutieFinala[3], solutieFinala[4]])
+  requires INV(rest, suma, solutieFinala)
+  ensures INV(rest - 10, suma, [solutieFinala[0], solutieFinala[1], solutieFinala[2] + 1, solutieFinala[3], solutieFinala[4]])
 {
 
- forall solutieCurenta | esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, copie - 10) 
+ forall solutieCurenta | esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, rest - 10) 
           ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1],
-          solutieCurenta[2] + solutieFinala[2] + 1,solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]], nr)
+          solutieCurenta[2] + solutieFinala[2] + 1,solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]], suma)
   {
-    assert esteSolutie(solutieCurenta, copie - 10);
-    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1,solutieCurenta[3], solutieCurenta[4]], copie);
+    assert esteSolutie(solutieCurenta, rest - 10);
+    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1,solutieCurenta[3], solutieCurenta[4]], rest);
 
-    aux2(copie,solutieCurenta);
+    exchangeArgumentCaz10(rest, solutieCurenta);
 
-    assert esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], copie);
+    assert esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], rest);
 
-    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, copie - 10) 
+    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, rest - 10) 
           ==> cost(solutieOarecare) >= cost(solutieCurenta);
     
 
-    assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], 1 + solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3],solutieFinala[4] + solutieCurenta[4]], nr);
+    assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], 1 + solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3],solutieFinala[4] + solutieCurenta[4]], suma);
 
-    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, nr)
+    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, suma)
           ==> cost(solutieOarecare) >= cost([solutieCurenta[0] + solutieFinala[0], solutieCurenta[1] + solutieFinala[1],
                                         solutieCurenta[2] + solutieFinala[2] + 1,solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]]);
   }
 
-  assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, copie - 10) ==> 
+  assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, rest - 10) ==> 
           esteSolutieOptima([solutieCurenta[0] + solutieFinala[0], solutieCurenta[1] + solutieFinala[1],
-                            solutieCurenta[2] + solutieFinala[2] + 1, solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]], nr);
+                            solutieCurenta[2] + solutieFinala[2] + 1, solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]], suma);
 
 }
 
 
 
-lemma aux3(copie : int, solutieCurenta : seq<int>)
-  requires 20 <= copie < 50
+lemma exchangeArgumentCaz20(rest : int, solutieCurenta : seq<int>)
+  requires 20 <= rest < 50
   requires esteSolutieValida(solutieCurenta)
-  requires esteSolutieOptima(solutieCurenta, copie - 20)
-  ensures esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]], copie)
+  requires esteSolutieOptima(solutieCurenta, rest - 20)
+  ensures esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]], rest)
 {
 
-    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]], copie);
-    if(!esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]], copie))
+    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]], rest);
+    if(!esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]], rest))
     {
-      var solutieOptima :|esteSolutieValida(solutieOptima) && esteSolutie(solutieOptima, copie) && cost(solutieOptima) < cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]]);
+      var solutieOptima :|esteSolutieValida(solutieOptima) && esteSolutie(solutieOptima, rest) && cost(solutieOptima) < cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]]);
       assert cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]]) == cost(solutieCurenta) + 1;
       assert solutieOptima[4] == 0;
       if(solutieOptima[3] >= 1)
       {
         var solutieOptima' := [solutieOptima[0], solutieOptima[1], solutieOptima[2], solutieOptima[3] - 1, solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 1;
         assert cost(solutieOptima) - 1 < cost(solutieCurenta);
         assert false;
@@ -250,7 +252,7 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[2] >= 2)
       {
         var solutieOptima' := [solutieOptima[0], solutieOptima[1], solutieOptima[2] - 2, solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 2;
         assert cost(solutieOptima) - 2 < cost(solutieCurenta);
         assert false;
@@ -258,7 +260,7 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[2] >= 1 && solutieOptima[1] >= 2)
       {       
         var solutieOptima' := [solutieOptima[0], solutieOptima[1] - 2, solutieOptima[2] - 1, solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 3;
         assert cost(solutieOptima) - 3 < cost(solutieCurenta);
         assert false;
@@ -266,7 +268,7 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[2] >= 1 && solutieOptima[1] >= 1 && solutieOptima[0] >= 5)
       {
         var solutieOptima' := [solutieOptima[0] - 5, solutieOptima[1] - 1, solutieOptima[2] - 1, solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 7;
         assert cost(solutieOptima) - 7 < cost(solutieCurenta);
         assert false;
@@ -274,7 +276,7 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[1] >= 4)
       {
         var solutieOptima' := [solutieOptima[0], solutieOptima[1] - 4, solutieOptima[2], solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 4;
         assert cost(solutieOptima) - 4 < cost(solutieCurenta);
         assert false;
@@ -282,7 +284,7 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[1] >= 3 && solutieOptima[0] >= 5)
       {
         var solutieOptima' := [solutieOptima[0] - 5, solutieOptima[1] - 3, solutieOptima[2], solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 8;
         assert cost(solutieOptima) - 8 < cost(solutieCurenta);
         assert false;
@@ -290,7 +292,7 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[1] >= 2 && solutieOptima[0] >= 10)
       {
         var solutieOptima' := [solutieOptima[0] - 10, solutieOptima[1] - 2, solutieOptima[2], solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 12;
         assert cost(solutieOptima) - 12 < cost(solutieCurenta);
         assert false;
@@ -298,7 +300,7 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[1] >= 1 && solutieOptima[0] >= 15)
       {
         var solutieOptima' := [solutieOptima[0] - 15, solutieOptima[1] - 1, solutieOptima[2], solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 16;
         assert cost(solutieOptima) - 16 < cost(solutieCurenta);
         assert false;
@@ -306,7 +308,7 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[0] >= 20)
       {
         var solutieOptima' := [solutieOptima[0] - 20, solutieOptima[1], solutieOptima[2], solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 20;
         assert cost(solutieOptima) - 20 < cost(solutieCurenta);
         assert false;
@@ -314,7 +316,7 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
       else if(solutieOptima[2] >= 1 && solutieOptima[0] >= 10)
       {
         var solutieOptima' := [solutieOptima[0] - 10, solutieOptima[1], solutieOptima[2] - 1, solutieOptima[3], solutieOptima[4]];
-        assert esteSolutie(solutieOptima', copie - 20);
+        assert esteSolutie(solutieOptima', rest - 20);
         assert cost(solutieOptima') == cost(solutieOptima) - 11;
         assert cost(solutieOptima) - 11 < cost(solutieCurenta);
         assert false;
@@ -327,63 +329,63 @@ lemma aux3(copie : int, solutieCurenta : seq<int>)
 
 
 
-lemma cazMaxim20(copie : int, nr : int, solutieFinala : seq<int>)
-  requires 20 <= copie < 50 
+lemma cazMaxim20(rest : int, suma : int, solutieFinala : seq<int>)
+  requires 20 <= rest < 50 
   requires esteSolutieValida(solutieFinala) 
-  requires INV(copie, nr, solutieFinala)
-  ensures INV(copie - 20, nr, [solutieFinala[0], solutieFinala[1], solutieFinala[2], solutieFinala[3] + 1, solutieFinala[4]])
+  requires INV(rest, suma, solutieFinala)
+  ensures INV(rest - 20, suma, [solutieFinala[0], solutieFinala[1], solutieFinala[2], solutieFinala[3] + 1, solutieFinala[4]])
 {
 
- forall solutieCurenta | esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, copie - 20) 
+ forall solutieCurenta | esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, rest - 20) 
           ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1],
-          solutieCurenta[2] + solutieFinala[2], solutieCurenta[3] + solutieFinala[3] + 1, solutieCurenta[4] + solutieFinala[4]], nr)
+          solutieCurenta[2] + solutieFinala[2], solutieCurenta[3] + solutieFinala[3] + 1, solutieCurenta[4] + solutieFinala[4]], suma)
   {
-    assert esteSolutie(solutieCurenta, copie - 20);
-    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3] + 1, solutieCurenta[4]], copie);
+    assert esteSolutie(solutieCurenta, rest - 20);
+    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3] + 1, solutieCurenta[4]], rest);
 
-    aux3(copie,solutieCurenta);
+    exchangeArgumentCaz20(rest, solutieCurenta);
 
-    assert esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]], copie);
+    assert esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], 1 + solutieCurenta[3], solutieCurenta[4]], rest);
 
-    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, copie - 20) 
+    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, rest - 20) 
           ==> cost(solutieOarecare) >= cost(solutieCurenta);
     
 
-    assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], 1 + solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], nr);
+    assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], 1 + solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma);
 
-    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, nr)
+    assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, suma)
           ==> cost(solutieOarecare) >= cost([solutieCurenta[0] + solutieFinala[0], solutieCurenta[1] + solutieFinala[1],
                                         solutieCurenta[2] + solutieFinala[2], 1 + solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]]);
   }
 
-  assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, copie - 20) ==> 
+  assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, rest - 20) ==> 
           esteSolutieOptima([solutieCurenta[0] + solutieFinala[0], solutieCurenta[1] + solutieFinala[1],
-                            solutieCurenta[2] + solutieFinala[2], 1 + solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]], nr);
+                            solutieCurenta[2] + solutieFinala[2], 1 + solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]], suma);
 
 }
 
 
 
 
-lemma B(copie : int, nr : int, solutieOarecare : seq<int>, solutieCurenta : seq<int>)
+lemma exchangeArgumentCaz50(rest : int, suma : int, solutieOarecare : seq<int>, solutieCurenta : seq<int>)
   requires esteSolutieValida(solutieOarecare)
   requires esteSolutieValida(solutieCurenta)
-  requires copie >= 50
-  requires esteSolutie(solutieOarecare, copie)
-  requires esteSolutie(solutieCurenta, copie - 50)
-  requires esteSolutieOptima(solutieCurenta, copie - 50)
+  requires rest >= 50
+  requires esteSolutie(solutieOarecare, rest)
+  requires esteSolutie(solutieCurenta, rest - 50)
+  requires esteSolutieOptima(solutieCurenta, rest - 50)
   ensures cost(solutieOarecare) >= cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]])
   decreases solutieOarecare[0] + solutieOarecare[1] + solutieOarecare[2] + solutieOarecare[3]
 {
-  assert esteSolutie(solutieOarecare, copie);
-  assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], copie);
+  assert esteSolutie(solutieOarecare, rest);
+  assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], rest);
 
   if(cost(solutieOarecare) < cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]]))
   {
     if(solutieOarecare[4] > solutieCurenta[4] + 1)
     {
       assert cost([solutieOarecare[0], solutieOarecare[1], solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] - 1]) < cost(solutieCurenta);
-      assert esteSolutieOptima([solutieOarecare[0], solutieOarecare[1], solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] - 1],copie - 50);
+      assert esteSolutieOptima([solutieOarecare[0], solutieOarecare[1], solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] - 1], rest - 50);
       assert false;
     }
     else if(solutieOarecare[4] < solutieCurenta[4] + 1)
@@ -393,282 +395,282 @@ lemma B(copie : int, nr : int, solutieOarecare : seq<int>, solutieCurenta : seq<
       if(solutieOarecare[2] >= 1 && solutieOarecare[3] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1], solutieOarecare[2] - 1, solutieOarecare[3] - 2, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[2] >= 3 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1], solutieOarecare[2] - 3, solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[2] >= 5)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1], solutieOarecare[2] - 5, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[1] >= 10)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 10, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[1] >= 8 && solutieOarecare[2] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 8, solutieOarecare[2] - 1, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[1] >= 6 && solutieOarecare[2] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 6, solutieOarecare[2] - 2, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[1] >= 6 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 6, solutieOarecare[2], solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[1] >= 4 && solutieOarecare[2] >= 3)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 4, solutieOarecare[2] - 3, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[1] >= 4 && solutieOarecare[2] >= 1 && solutieOarecare[3] >=1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 4, solutieOarecare[2] - 1, solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[1] >= 2 && solutieOarecare[2] >= 4)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 2, solutieOarecare[2] - 4, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[1] >= 2 && solutieOarecare[2] >= 2 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 2, solutieOarecare[2] - 2, solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[1] >= 2 && solutieOarecare[3] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0],solutieOarecare[1] - 2, solutieOarecare[2], solutieOarecare[3] - 2,solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 50)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 50, solutieOarecare[1], solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 45 && solutieOarecare[1] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 45, solutieOarecare[1] - 1, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 40 && solutieOarecare[1] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 40, solutieOarecare[1] - 2, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 40 && solutieOarecare[2] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 40, solutieOarecare[1], solutieOarecare[2] - 1, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 35 && solutieOarecare[1] >= 3)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 35, solutieOarecare[1] - 3, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 35 && solutieOarecare[1] >= 1 && solutieOarecare[2] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 35, solutieOarecare[1] - 1, solutieOarecare[2] - 1, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 30 && solutieOarecare[1] >= 4)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 30, solutieOarecare[1] - 4, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 30 && solutieOarecare[1] >= 2 && solutieOarecare[2] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 30, solutieOarecare[1] - 2, solutieOarecare[2] - 1, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 30 && solutieOarecare[2] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 30, solutieOarecare[1], solutieOarecare[2] - 2, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 30 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 30, solutieOarecare[1], solutieOarecare[2], solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 25 && solutieOarecare[1] >= 5)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 25, solutieOarecare[1] - 5, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 25 && solutieOarecare[1] >= 3 &&solutieOarecare[2] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 25, solutieOarecare[1] - 3, solutieOarecare[2] - 1, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 25 && solutieOarecare[1] >= 1 &&solutieOarecare[2] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 25, solutieOarecare[1] - 1, solutieOarecare[2] - 2, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 25 && solutieOarecare[1] >= 1 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 25, solutieOarecare[1] - 1, solutieOarecare[2], solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 20 && solutieOarecare[1] >= 6)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 20, solutieOarecare[1] - 6, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 20 && solutieOarecare[1] >= 4 && solutieOarecare[2] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 20, solutieOarecare[1] - 4, solutieOarecare[2] - 1, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 20 && solutieOarecare[1] >= 2 && solutieOarecare[2] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 20, solutieOarecare[1] - 2, solutieOarecare[2] - 2, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie,nr,nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 20 && solutieOarecare[1] >= 2 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 20, solutieOarecare[1] - 2, solutieOarecare[2], solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 20 && solutieOarecare[2] >= 3)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 20, solutieOarecare[1], solutieOarecare[2] - 3, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 20 && solutieOarecare[2] >= 1 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 20, solutieOarecare[1], solutieOarecare[2] - 1, solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie,nr,nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 15 && solutieOarecare[1] >= 7)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 15, solutieOarecare[1] - 7, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 15 && solutieOarecare[1] >= 5 && solutieOarecare[2] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 15, solutieOarecare[1] - 5, solutieOarecare[2] - 1, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 15 && solutieOarecare[1] >= 3 && solutieOarecare[2] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 15, solutieOarecare[1] - 3, solutieOarecare[2] - 2, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 15 && solutieOarecare[1] >= 3 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 15, solutieOarecare[1] - 3, solutieOarecare[2], solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 15 && solutieOarecare[1] >= 1 && solutieOarecare[2] >= 3)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 15, solutieOarecare[1] - 1, solutieOarecare[2] - 3, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 15 && solutieOarecare[1] >= 1 && solutieOarecare[2] >= 1 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 15, solutieOarecare[1] - 1, solutieOarecare[2] - 1, solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 10 && solutieOarecare[1] >= 8)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1] - 8, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 10 && solutieOarecare[1] >= 6 && solutieOarecare[2] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1] - 6, solutieOarecare[2] - 1, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 10 && solutieOarecare[1] >= 4 && solutieOarecare[2] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1] - 4, solutieOarecare[2] - 2, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 10 && solutieOarecare[1] >= 4 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1] - 4, solutieOarecare[2], solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 10 && solutieOarecare[1] >= 2 && solutieOarecare[2] >= 3)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1] - 2, solutieOarecare[2] - 3, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 10 && solutieOarecare[1] >= 2 && solutieOarecare[2] >= 1 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1] - 2, solutieOarecare[2] - 1, solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 10 && solutieOarecare[2] >= 4)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1], solutieOarecare[2] - 4, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 10 && solutieOarecare[2] >= 2 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1], solutieOarecare[2] - 2, solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 10 && solutieOarecare[3] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1], solutieOarecare[2], solutieOarecare[3] - 2, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 5 && solutieOarecare[1] >= 9)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 9, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 5 && solutieOarecare[1] >= 7 && solutieOarecare[2] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 7, solutieOarecare[2] - 1, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 5 && solutieOarecare[1] >= 5 && solutieOarecare[2] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 5, solutieOarecare[2] - 2, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 5 && solutieOarecare[1] >= 5 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 5, solutieOarecare[2], solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 5 && solutieOarecare[1] >= 3 && solutieOarecare[2] >= 3)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 3, solutieOarecare[2] - 3, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 5 && solutieOarecare[1] >= 3 && solutieOarecare[2] >= 1 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 3, solutieOarecare[2] - 1, solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 5 && solutieOarecare[1] >= 1 && solutieOarecare[2] >= 4)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 1, solutieOarecare[2] - 4, solutieOarecare[3], solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 5 && solutieOarecare[1] >= 1 && solutieOarecare[2] >= 2 && solutieOarecare[3] >= 1)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 1, solutieOarecare[2] - 2, solutieOarecare[3] - 1, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else if(solutieOarecare[0] >= 5 && solutieOarecare[1] >= 1 && solutieOarecare[3] >= 2)
       {
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 1, solutieOarecare[2], solutieOarecare[3] - 2, solutieOarecare[4] + 1];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
       }
       else{
           
@@ -680,7 +682,7 @@ lemma B(copie : int, nr : int, solutieOarecare : seq<int>, solutieCurenta : seq<
           {
             var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1], solutieOarecare[2] + 1, solutieOarecare[3] - 3, solutieOarecare[4] + 1];
             assert cost(nouaSolutieOarecare) < cost(solutieOarecare);
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
           }
       }
     }
@@ -702,47 +704,47 @@ lemma B(copie : int, nr : int, solutieOarecare : seq<int>, solutieCurenta : seq<
         {
             assert solutieOarecare[2] >= 2;
             var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1], solutieOarecare[2] - 2, solutieOarecare[3] + 1, solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
         else if(solutieOarecare[2] >= 1 && solutieOarecare[1] >= 2)
         {
             var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 2, solutieOarecare[2] - 1, solutieOarecare[3] + 1, solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
         else if(solutieOarecare[2] >= 1 && solutieOarecare[1] >= 1 && solutieOarecare[0] >= 5)
         {
             var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 1, solutieOarecare[2] - 1, solutieOarecare[3] + 1, solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
         else if(solutieOarecare[1] >= 4)
         {
             var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 4, solutieOarecare[2], solutieOarecare[3] + 1, solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
         else if(solutieOarecare[1] >= 3 && solutieOarecare[0] >= 5)
         {
             var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 3, solutieOarecare[2], solutieOarecare[3] + 1, solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
         else if(solutieOarecare[1] >= 2 && solutieOarecare[0] >= 10)
         {
             var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1] - 2, solutieOarecare[2], solutieOarecare[3] + 1, solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
         else if(solutieOarecare[1] >= 1 && solutieOarecare[0] >= 15)
         {
             var nouaSolutieOarecare := [solutieOarecare[0] - 15, solutieOarecare[1] - 1, solutieOarecare[2], solutieOarecare[3] + 1, solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
         else if(solutieOarecare[0] >= 20)
         {
             var nouaSolutieOarecare := [solutieOarecare[0] - 20, solutieOarecare[1], solutieOarecare[2], solutieOarecare[3] + 1, solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
         else if(solutieOarecare[2] >= 1 && solutieOarecare[0] >= 10)
         {
             var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1], solutieOarecare[2] - 1, solutieOarecare[3] + 1, solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
       }
 
@@ -760,16 +762,16 @@ lemma B(copie : int, nr : int, solutieOarecare : seq<int>, solutieCurenta : seq<
         if(solutieOarecare[0] >= 10)
         {
           var nouaSolutieOarecare := [solutieOarecare[0] - 10, solutieOarecare[1], solutieOarecare[2] + 1, solutieOarecare[3], solutieOarecare[4]];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
         else if(solutieOarecare[1] >= 2){
             var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1] - 2, solutieOarecare[2] + 1, solutieOarecare[3], solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         }
           else
           {
             var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] - 1, solutieOarecare[2] + 1, solutieOarecare[3], solutieOarecare[4]];
-            B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+            exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
           }
         }
         assert solutieOarecare[2] == solutieCurenta[2];
@@ -785,7 +787,7 @@ lemma B(copie : int, nr : int, solutieOarecare : seq<int>, solutieCurenta : seq<
       {
           assert solutieOarecare[0] >= 5;
           var nouaSolutieOarecare := [solutieOarecare[0] - 5, solutieOarecare[1] + 1, solutieOarecare[2], solutieOarecare[3], solutieOarecare[4]];
-          B(copie, nr, nouaSolutieOarecare, solutieCurenta);
+          exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
         
       }
     }
@@ -795,179 +797,180 @@ lemma B(copie : int, nr : int, solutieOarecare : seq<int>, solutieCurenta : seq<
   }
 }
 
-lemma esteSolutiePentruCopie(copie : int, nr : int, solutieCurenta : seq<int>)
+lemma esteSolutiePentruRest(rest : int, suma : int, solutieCurenta : seq<int>)
   requires esteSolutieValida(solutieCurenta)
-  requires copie >= 50
-  requires esteSolutie(solutieCurenta, copie - 50)
-  requires esteSolutieOptima(solutieCurenta, copie - 50)
-  ensures esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], copie)
+  requires rest >= 50
+  requires esteSolutie(solutieCurenta, rest - 50)
+  requires esteSolutieOptima(solutieCurenta, rest - 50)
+  ensures esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], rest)
 {
-  forall solutieOarecare | esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, copie)
+  forall solutieOarecare | esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, rest)
     ensures cost(solutieOarecare) >= cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]])
   {
-    B(copie, nr, solutieOarecare, solutieCurenta);
+    exchangeArgumentCaz50(rest, suma, solutieOarecare, solutieCurenta);
   }
   
 }
 
-lemma aux(copie : int, nr : int, solutieOarecare : seq<int>, solutieFinala : seq<int>, solutieCurenta : seq<int>)
+
+lemma aux(rest : int, suma : int, solutieOarecare : seq<int>, solutieFinala : seq<int>, solutieCurenta : seq<int>)
   requires esteSolutieValida(solutieOarecare)
   requires esteSolutieValida(solutieFinala)
   requires esteSolutieValida(solutieCurenta)
-  requires copie >= 50
-  requires esteSolutieOptima(solutieCurenta, copie - 50)
-  requires esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], nr)
-  requires esteSolutie(solutieOarecare, nr)
-  requires INV(copie, nr, solutieFinala)
+  requires rest >= 50
+  requires esteSolutieOptima(solutieCurenta, rest - 50)
+  requires esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma)
+  requires esteSolutie(solutieOarecare, suma)
+  requires INV(rest, suma, solutieFinala)
   ensures cost(solutieOarecare) >= cost([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]])
 {
-  esteSolutiePentruCopie(copie, nr, solutieCurenta);
+  esteSolutiePentruRest(rest, suma, solutieCurenta);
 }
 
 
 
 
-lemma cazMaxim50(copie : int, nr : int, solutieFinala : seq<int>)
-  requires copie >= 50
+lemma cazMaxim50(rest : int, suma : int, solutieFinala : seq<int>)
+  requires rest >= 50
   requires esteSolutieValida(solutieFinala)
-  requires INV(copie, nr, solutieFinala)
-  ensures INV(copie - 50, nr, [solutieFinala[0], solutieFinala[1], solutieFinala[2], solutieFinala[3], 1 + solutieFinala[4]])
+  requires INV(rest, suma, solutieFinala)
+  ensures INV(rest - 50, suma, [solutieFinala[0], solutieFinala[1], solutieFinala[2], solutieFinala[3], 1 + solutieFinala[4]])
 {
   assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>
-          (esteSolutie(solutieCurenta, copie) ==> 
-          esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3],solutieFinala[4] + solutieCurenta[4]], nr));
+          (esteSolutie(solutieCurenta, rest) ==> 
+          esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3],solutieFinala[4] + solutieCurenta[4]], suma));
 
    forall solutieCurenta | esteSolutieValida(solutieCurenta) 
-          && esteSolutie(solutieCurenta, copie - 50) 
-          ensures esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], nr)
+          && esteSolutie(solutieCurenta, rest - 50) 
+          ensures esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma)
    {
-     assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], copie);
+     assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], rest);
    }
   
 
   forall solutieCurenta | esteSolutieValida(solutieCurenta) 
-          && esteSolutieOptima(solutieCurenta, copie - 50) 
-          ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], nr)
+          && esteSolutieOptima(solutieCurenta, rest - 50) 
+          ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma)
   {
 
-    assert esteSolutie(solutieCurenta, copie - 50);
-    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], copie);
+    assert esteSolutie(solutieCurenta, rest - 50);
+    assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], rest);
 
     assert forall solutieOarecare :: esteSolutieValida(solutieOarecare)
-          && esteSolutie(solutieOarecare, copie - 50) 
+          && esteSolutie(solutieOarecare, rest - 50) 
           ==> cost(solutieOarecare) >= cost(solutieCurenta);
 
 
-    assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], nr);
+    assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma);
 
     forall solutieOarecare | esteSolutieValida(solutieOarecare)
-                 && esteSolutie(solutieOarecare, nr)
+                 && esteSolutie(solutieOarecare, suma)
       ensures cost(solutieOarecare) >= cost([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]])
       {
-          aux(copie, nr, solutieOarecare, solutieFinala, solutieCurenta);
+          aux(rest, suma, solutieOarecare, solutieFinala, solutieCurenta);
       }
 
     assert forall solutieOarecare :: esteSolutieValida(solutieOarecare)
-             && esteSolutie(solutieOarecare, nr) 
+             && esteSolutie(solutieOarecare, suma) 
           ==> cost(solutieOarecare) >= cost([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]]);
   }
 
 
   assert forall solutieCurenta :: esteSolutieValida(solutieCurenta)
-          && esteSolutieOptima(solutieCurenta, copie - 50) ==> 
-          esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], nr);
+          && esteSolutieOptima(solutieCurenta, rest - 50) ==> 
+          esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma);
 
 
   assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>
-          (esteSolutie(solutieCurenta, copie - 50) ==> 
-          esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], nr));
+          (esteSolutie(solutieCurenta, rest - 50) ==> 
+          esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma));
   
   assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>        
-          (esteSolutieOptima(solutieCurenta, copie - 50) ==> 
-          esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], nr));
+          (esteSolutieOptima(solutieCurenta, rest - 50) ==> 
+          esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma));
 
-  assert  INV(copie - 50, nr, [solutieFinala[0], solutieFinala[1], solutieFinala[2], solutieFinala[3], 1 + solutieFinala[4]]);
+  assert  INV(rest - 50, suma, [solutieFinala[0], solutieFinala[1], solutieFinala[2], solutieFinala[3], 1 + solutieFinala[4]]);
 }
 
 
 
-  method nrMinimBancnote(nr : int) returns (solutie : seq<int>)
-    requires nr >= 0
+  method nrMinimBancnote(suma : int) returns (solutie : seq<int>)
+    requires suma >= 0
     ensures esteSolutieValida(solutie)
-    ensures esteSolutie(solutie, nr)
-    ensures esteSolutieOptima(solutie, nr)
+    ensures esteSolutie(solutie, suma)
+    ensures esteSolutieOptima(solutie, suma)
 {
 
-    var copie :=  nr;
+    var rest  :=  suma;
     var s1 := 0;
     var s5 := 0;
     var s10 := 0;
     var s20 := 0;
     var s50 := 0;
-    while(copie > 0)
-      decreases copie
-      invariant 0 <= copie <= nr
-      invariant esteSolutie([s1, s5, s10, s20, s50], nr - copie)
-      invariant INV(copie, nr, [s1, s5, s10, s20, s50])
+    while(rest > 0)
+      decreases rest
+      invariant 0 <= rest <= suma
+      invariant esteSolutie([s1, s5, s10, s20, s50], suma - rest)
+      invariant INV(rest, suma, [s1, s5, s10, s20, s50])
     {
         var i := 0;
-        var s := gasireMaxim(copie);
+        var s := gasireMaxim(rest);
         if( s == 1){
-            cazMaxim1(copie, nr, [s1, s5, s10, s20, s50]);
+            cazMaxim1(rest, suma, [s1, s5, s10, s20, s50]);
             s1 := s1 + 1;
-            assert esteSolutie([s1, s5, s10, s20, s50], nr - (copie - 1));
-            assert INV(copie - 1, nr, [s1, s5, s10, s20, s50]);
+            assert esteSolutie([s1, s5, s10, s20, s50], suma - (rest - 1));
+            assert INV(rest - 1, suma, [s1, s5, s10, s20, s50]);
         }
         else if(s == 5)
             {
-                cazMaxim5(copie, nr, [s1, s5, s10, s20, s50]);
+                cazMaxim5(rest, suma, [s1, s5, s10, s20, s50]);
                 s5 := s5 + 1;
-                assert esteSolutie([s1, s5, s10, s20, s50], nr - (copie - 5));
-                assert INV(copie - 5, nr, [s1, s5, s10, s20, s50]);
+                assert esteSolutie([s1, s5, s10, s20, s50], suma - (rest - 5));
+                assert INV(rest - 5, suma, [s1, s5, s10, s20, s50]);
 
             }
             else if (s == 10){
-                cazMaxim10(copie, nr, [s1, s5, s10, s20, s50]);
+                cazMaxim10(rest, suma, [s1, s5, s10, s20, s50]);
                 s10 := s10 + 1;
-                assert esteSolutie([s1, s5, s10, s20, s50], nr - (copie - 10));
-                assert INV(copie - 10, nr, [s1, s5, s10, s20, s50]);
+                assert esteSolutie([s1, s5, s10, s20, s50], suma - (rest - 10));
+                assert INV(rest - 10, suma, [s1, s5, s10, s20, s50]);
 
             }
             else if(s == 20){
-                cazMaxim20(copie, nr, [s1, s5, s10, s20, s50]);
+                cazMaxim20(rest, suma, [s1, s5, s10, s20, s50]);
                 s20 := s20 + 1;
-                assert esteSolutie([s1, s5, s10, s20, s50], nr - (copie - 20));
-                assert INV(copie - 20, nr, [s1, s5, s10, s20, s50]);
+                assert esteSolutie([s1, s5, s10, s20, s50], suma - (rest - 20));
+                assert INV(rest - 20, suma, [s1, s5, s10, s20, s50]);
             }
             else{
-                cazMaxim50(copie, nr, [s1, s5, s10, s20, s50]);
+                cazMaxim50(rest, suma, [s1, s5, s10, s20, s50]);
                 s50 := s50 + 1;
-                assert esteSolutie([s1, s5, s10, s20, s50], nr - (copie - 50));
-                assert INV(copie - 50, nr, [s1, s5, s10, s20, s50]);
+                assert esteSolutie([s1, s5, s10, s20, s50], suma - (rest - 50));
+                assert INV(rest - 50, suma, [s1, s5, s10, s20, s50]);
             }
 
-        copie := copie - s;
+        rest := rest - s;
     }
     solutie := [s1, s5, s10, s20, s50];
 }
 
 
 method Main() {
-  var nr := 188;
-  var sol := nrMinimBancnote(nr);
+  var suma := 188;
+  var solutia := nrMinimBancnote(suma);
   print "Solutia este = ";
   print "1: ";
-  print sol[0];
+  print solutie[0];
   print ", ";
   print "5: ";
-  print sol[1];
+  print solutie[1];
   print ", ";
   print "10: ";
-  print sol[2];
+  print solutie[2];
   print ", ";
   print "20: ";
-  print sol[3];
+  print solutie[3];
   print ", ";
   print "50: ";
-  print sol[4];
+  print solutie[4];
 }
