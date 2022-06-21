@@ -813,7 +813,7 @@ lemma esteSolutiePentruRest(rest : int, suma : int, solutieCurenta : seq<int>)
 }
 
 
-lemma aux(rest : int, suma : int, solutieOarecare : seq<int>, solutieFinala : seq<int>, solutieCurenta : seq<int>)
+lemma solutieFianalaAreCostMinim(rest : int, suma : int, solutieOarecare : seq<int>, solutieFinala : seq<int>, solutieCurenta : seq<int>)
   requires esteSolutieValida(solutieOarecare)
   requires esteSolutieValida(solutieFinala)
   requires esteSolutieValida(solutieCurenta)
@@ -867,7 +867,7 @@ lemma cazMaxim50(rest : int, suma : int, solutieFinala : seq<int>)
                  && esteSolutie(solutieOarecare, suma)
       ensures cost(solutieOarecare) >= cost([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]])
       {
-          aux(rest, suma, solutieOarecare, solutieFinala, solutieCurenta);
+          solutieFianalaAreCostMinim(rest, suma, solutieOarecare, solutieFinala, solutieCurenta);
       }
 
     assert forall solutieOarecare :: esteSolutieValida(solutieOarecare)
