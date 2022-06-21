@@ -1,1 +1,187 @@
+\lstset{frame=tb,
+	language=C++,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny,
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3}
+
 \chapter{Detalii de implementare}
+In acest capitol voi prezenta detaliile de implementare a algoritmului cat si modul in care am demonstrat corectitudinea codului utilizand Dafny.
+\section{Reprezentarea datelor de intrare si a celor de iesire}
+
+\subsection{Varibilele folosite, tipurile si semnificatia acestora}
+
+\begin{itemize}
+	\item suma : $int$ $\rightarrow$ reprezinta suma pe care trebuie sa o platim 
+	\item rest : $int$ $\rightarrow$ reprezinta suma care ne-a ramas de platit dupa ce am ales o bancnota
+	\item solutieFinala : $seq<int>$ $\rightarrow$ reprezinta solutia finala a problemei 
+	\item solutieCurenta : $seq<int>$ $\rightarrow$ reprezinta solutia creata pana la pasul curent
+	\item solutieOarecare  : $seq<int>$ $\rightarrow$ reprezinta o solutie pe care am folosit-o pentru a demonstra corectitudinea programului
+\end{itemize}
+
+\subsection{Descrierea solutiei rezultate}
+Bancnotele folosite de mine pentru rezolvarea acestei probleme sunt $B = \{1, 5, 10, 20, 50\}$, astfel, solutia problemei va fi o secventa de numere naturale $ solutie = \{n_1,n_5,n_{10},n_{20},n_{50} \}$ unde $n_i$ va numarul de $i$ bancnote folosite iar 
+\begin{center}
+	$n_1 \cdot 1 + n_5 \cdot 5 + n_{10} \cdot 10 + n_{20} \cdot 20 + n_{50} \cdot 50 == suma $.
+\end{center}
+\vspace{0.5cm}
+\section{Implementarea algoritmului Greedy}
+\subsection{Predicate si functii }
+Inainte de a trece la implementarea propriu-zisa a algoritmului, o sa incep prin a prezenta predicatele care asigura corectitudinea rezultatului intors de catre metoda ce genereaza solutia optima pentru suma pe care trebuie sa o platim. \par 
+Predicatele sunt metode care returneaza o valoare de adevar si sunt folosite pentru a verifica o anumita proprietate sau mai multe prin intermediul unei singure instructiuni.
+\par
+In Dafny, functiile sunt asemanatoare cu functiile matematice. Functiile contin o singura expresie care returneaza o valoare de tipul declarat in antetul functiei.
+\par
+\begin{enumerate}
+	\item Predicatul $esteSolutieValida(solutie : seq<int>)$ $\rightarrow$ acest predicat ne asigura ca solutia primita ca parametru este de lungime 5 si ca fiecare element este mai mare sau egal cu 0. Conditii mentionate anterior sunt foarte importante deoarece, avand 5 bancnote (1, 5, 10, 20, 50), inseamna ca va trebuie sa existe un elemnt al solutiei pentru fiecare dintre ele.
+	\par 
+\begin{lstlisting}
+	predicate esteSolutieValida(solutie : seq<int>)
+	{
+		|solutie| == 5 && solutie[0] >= 0 && solutie[1] >= 0 && 	solutie[2] >= 0 && solutie[3] >=0 && solutie[4] >=0
+	}
+\end{lstlisting}
+\item Predicatul $esteSolutie(solutie : seq<int>, suma : int) \rightarrow$ acest predicat verifica faptul ca suma elementelor secventei $solutie$ inmultime cu bancnotele folosite in problema este egala cu $suma$. Daca cele doua sunt egale, atunci secventa $solutie$ devine solutie posibila pentru $suma$.
+\begin{lstlisting}
+	predicate esteSolutie(solutie : seq<int>, suma : int)
+		requires esteSolutieValida(solutie)
+	{
+		solutie[0] * 1 + solutie[1] * 5 + solutie[2] * 10 + solutie[3] * 20 + solutie[4] * 50 == suma
+	}
+\end{lstlisting}
+\vspace{1.5cm}
+\item Functia $cost(solutie : seq<int>) : int \rightarrow$ aceasta functie calculeaza si returneaza cate bancnote au fost folosite pentru a forma solutia posibila memorate in variabila $solutie$ data ca parametru.
+\begin{lstlisting}
+	function cost(solutie : seq<int>) : int 
+		requires esteSolutieValida(solutie)
+	{
+		solutie[0] + solutie[1] + solutie[2] + solutie[3] + solutie[4]
+	}
+\end{lstlisting}
+
+\item Predicatul $ esteSolutieOptima(solutie : seq<int>, suma : int) \rightarrow$ acest predicat va returnat valoarea de adevar daca solutia primita ca parametru este o solutie posibila pentru suma pe  care trebuie sa o platim si orice alta solutie posibila are costul mai mare sau egal. Acest lucru se intampla deoarece Problema Bancnotelor este o problema de minimizare iar solutia trebuie sa aibe costul minim.
+\begin{lstlisting}
+	predicate esteSolutieOptima(solutie : seq<int>, suma : int)
+		requires esteSolutieValida(solutie)
+	{   
+		esteSolutie(solutie, suma) &&
+		forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, suma) 
+		==> cost(solutieOarecare) >= cost(solutie)
+	}
+\end{lstlisting}
+
+\item Predicatul $  INV(rest : int, suma : int, solutieFinala : seq<int>) \rightarrow$ acest predicat va fi adevarat daca pentru orice solutie posibila pentru $rest$ (suma care ne-a ramas de platit), 
+\begin{lstlisting}
+	predicate INV(rest : int, suma : int, solutieFinala : seq<int>)
+		requires esteSolutieValida(solutieFinala)
+	{
+		forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>
+		(esteSolutie(solutieCurenta, rest) ==> 
+		esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], 
+		solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma)) &&
+		(esteSolutieOptima(solutieCurenta, rest) ==> 
+		esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1],
+		solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma))
+	}
+\end{lstlisting}
+
+
+
+
+\end{enumerate}
+
+
+
+
+\subsection{Algoritmul Greedy}
+\begin{lstlisting}
+method nrMinimBancnote(suma : int) returns (solutie : seq<int>)
+	requires suma >= 0
+	ensures esteSolutieValida(solutie)
+	ensures esteSolutie(solutie, suma)
+	ensures esteSolutieOptima(solutie, suma)
+{
+  var rest  :=  suma;
+  var s1 := 0;
+  var s5 := 0;
+  var s10 := 0;
+  var s20 := 0;
+  var s50 := 0;
+  while(rest > 0)
+   decreases rest
+   invariant 0 <= rest <= suma
+   invariant esteSolutie([s1, s5, s10, s20, s50], suma - rest)
+   invariant INV(rest, suma, [s1, s5, s10, s20, s50])
+  {
+ 	var i := 0;
+	var s := gasireMaxim(rest);
+	if( s == 1)
+	{
+	   cazMaxim1(rest, suma, [s1, s5, s10, s20, s50]);
+	   s1 := s1 + 1;
+	   assert esteSolutie([s1, s5, s10, s20, s50], suma - (rest - 1));
+	   assert INV(rest - 1, suma, [s1, s5, s10, s20, s50]);
+	}
+	else if(s == 5)
+	{
+	   cazMaxim5(rest, suma, [s1, s5, s10, s20, s50]);
+	   s5 := s5 + 1;
+	   assert esteSolutie([s1, s5, s10, s20, s50], suma - (rest - 5));
+	   assert INV(rest - 5, suma, [s1, s5, s10, s20, s50]);
+			
+	}
+	else if (s == 10)
+	{
+	   cazMaxim10(rest, suma, [s1, s5, s10, s20, s50]);
+	   s10 := s10 + 1;
+	   assert esteSolutie([s1, s5, s10, s20, s50],
+	   		 suma - (rest - 10));
+	   assert INV(rest - 10, suma, [s1, s5, s10, s20, s50]);	
+	}
+	else if(s == 20)
+	{
+	   cazMaxim20(rest, suma, [s1, s5, s10, s20, s50]);
+	   s20 := s20 + 1;
+	   assert esteSolutie([s1, s5, s10, s20, s50], suma - (rest - 20));
+       assert INV(rest - 20, suma, [s1, s5, s10, s20, s50]);
+	}
+	else
+	{
+	   cazMaxim50(rest, suma, [s1, s5, s10, s20, s50]);
+	   s50 := s50 + 1;
+	   assert esteSolutie([s1, s5, s10, s20, s50], suma - (rest - 50));
+	   assert INV(rest - 50, suma, [s1, s5, s10, s20, s50]);
+	}
+	  rest := rest - s;
+	}
+	solutie := [s1, s5, s10, s20, s50];
+}
+\end{lstlisting}
+\par 
+Algoritmul propus de mine primeste ca parametru suma pe care va trebui sa o platim si returneaza o solutie care respecta proprietatile discutate mai sus in sectiunea $4.1.2 \ Descrierea \ \ solutiei \ \ rezultate $.
+ \par 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
