@@ -76,7 +76,7 @@ In Dafny, functiile sunt asemanatoare cu functiile matematice. Functiile contin 
 	}
 \end{lstlisting}
 
-\item Predicatul $  INV(rest : int, suma : int, solutieFinala : seq<int>) \rightarrow$ acest predicat va fi adevarat daca pentru orice solutie posibila pentru $rest$ (suma care ne-a ramas de platit), 
+\item Predicatul $  INV(rest : int, suma : int, solutieFinala : seq<int>) \rightarrow$ acest predicat va fi adevarat daca orice solutie care este valida este si solutie posibila pentru $rest$ (suma care ne-a ramas de platit) atunci suma dintre aceasta solutie si cea data ca parametru trebuie sa fie solutie posibila pentru suma totala care trebuie platita. Similar se intampla si pentru a demosntra ca suma celor doua solutii este solutie optima pentru suma.
 \begin{lstlisting}
 	predicate INV(rest : int, suma : int, solutieFinala : seq<int>)
 		requires esteSolutieValida(solutieFinala)
@@ -90,10 +90,6 @@ In Dafny, functiile sunt asemanatoare cu functiile matematice. Functiile contin 
 		solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma))
 	}
 \end{lstlisting}
-
-
-
-
 \end{enumerate}
 
 
@@ -114,10 +110,10 @@ method nrMinimBancnote(suma : int) returns (solutie : seq<int>)
   var s20 := 0;
   var s50 := 0;
   while(rest > 0)
-   decreases rest
-   invariant 0 <= rest <= suma
-   invariant esteSolutie([s1, s5, s10, s20, s50], suma - rest)
-   invariant INV(rest, suma, [s1, s5, s10, s20, s50])
+  	   decreases rest
+   	invariant 0 <= rest <= suma
+   	invariant esteSolutie([s1, s5, s10, s20, s50], suma - rest)
+   	invariant INV(rest, suma, [s1, s5, s10, s20, s50])
   {
  	var i := 0;
 	var s := gasireMaxim(rest);
@@ -165,22 +161,295 @@ method nrMinimBancnote(suma : int) returns (solutie : seq<int>)
 \end{lstlisting}
 \par 
 Algoritmul propus de mine primeste ca parametru suma pe care va trebui sa o platim si returneaza o solutie care respecta proprietatile discutate mai sus in sectiunea $4.1.2 \ Descrierea \ \ solutiei \ \ rezultate $.
- \par 
+\par 
+Preconditiile sunt expresii booleene care trebuie sa fie adevarate pentru variabilele date ca parametru, in timp ce postconditiile trebuie sa fie adevarate pentru variabilele returnate de metoda. Acestea sunt adaugate la inceputul metodei pentru a determina o buna functionare a programului si totodata corectitudinea acestuia.
+\par 
+Preconditia $requires \ \ suma >= 0$ ne indica faptul ca suma trebuie sa fie mai mare sau egala cu 0 pentru a se putea parcurge metoda.\par 
+\vspace{0.5cm}
+ \fbox{\parbox{5.5in}{
+ 		ensures esteSolutieValida(solutie) \par 
+ 		ensures esteSolutie(solutie, suma)\par
+ 		ensures esteSolutieOptima(solutie, suma)
+	}}
+\par
+\vspace{0.25cm}
+Aceste trei postconditii se focuseaza pe solutia returnata de metoda. Solutia trebuie sa fie valida, sa fie o solutie posibila pentru suma care trebuie platita si totodata sa fie si solutie oprima pentru aceasta.
+\par 
+Dupa indeplinirea cu succes a preconditiilor si a postconditiilor cerute, vom intra in corpul metodei. \par 
+La inceput, vom declara 5 variabile $s_1, s_5 , s_{10}, s_{20}, s_{50}$ pe care le initializam cu valoarea 0. Aceste variabile vor memora cate bancnote din fiecare tip sunt folosite. \par 
+In bucla $while$ se va calcula, la fiecare pas, cu ajutorul uneii metode $gasireMaxim(rest)$ valoarea bancnotei maxime care este mai mica sau egala cu $rest$. In functie de valoarea returnata de aceasta metoda, se va incrementa valoarea unei variabilele declarate la inceputul metodei, va scadea valoarea variabilei $rest$ cu valoarea bancnotei alese la pasul curent si se va apela o anumita lemma care ajuta la demonstrarea corectitudinii programului insa voi reveni ulterior la acest aspect.
+\par 
+
+Un alt lucru interesant la acest limbaj de programare este prezenta invariantilor la inceputul buclelor. Invariantii sunt, asemenea postconditiilor si preconditiilor, proprietati care trebuie respectate pentru a se realiza cu succes bucla while.
+
+\vspace{0.5cm}
+\fbox{\parbox{5.5in}{
+		decreases rest \par 
+		invariant 0 $<=$ rest $<=$ suma \par 
+		invariant esteSolutie([s1, s5, s10, s20, s50], suma - rest) \par
+		invariant INV(rest, suma, [s1, s5, s10, s20, s50])
+	}
+}
+\par 
+\vspace{0.5cm}
+Acesti invarianti ne indica faptul ca $rest$ isi va schimba valoarea si va descreste dar va fi mereu mai mare decar 0 si mai mica sau egala decat $suma$ si ca solutia creata pana la pasul curent este o solutie posibila pentru $suma-rest$. 
+Totodata, vom folosi predicatul $INV$ pentru a verifica fapul ca solutia noastra este solutie optima. 
+\par
+\subsection{Leme importante in demonstrarea corectitudinii}
+Lemele sunt metode care sunt folosite pentru a verifica corectitudinea programului. Acestea contin preconditii iar proprietatea care trebuie demonstrata va fi postconditia lemei.\par
+Uneori, lemele pot fi demonstrate de catre Dafny fara a adauga intructiuni, ceea ce inseamna ca un corp fara instructiuni serveste ca argument pentru demonstratie.
+\par
+In prezentarea agloritmului Greedy creat de mine, in functie de bancnota aleasa, va fi apelata o lema care va verifica daca alegerea facuta va duce la o solutie optima. Spre exemplu, pentru $s = 1$, unde $s$ este valoarea returnata de metoda $gasireMaxim(rest)$, se va apela lema $cazMaxim1$, pentru $s = 5$ se va apela lema $cazMaxim5$, iar acest lucru se intampla pentru fiecare bancnota care este posibil sa fie aleasa. \par 
+In continuare, o sa prezint lemele $cazMaxim1$ si $cazMaxim50$. Primele patru leme, $cazMaxim1$, $cazMaxim5$, $cazMaxim10$, $cazMaxim20$, sunt similare, drep urmare voi prezenta doar lema $cazMaxim1$. Insa, in subsectiunea urmatoare, voi reveni asupra lemelor $cazMaxim10$, $cazMaxim20$ deoarece contin o demonstratie interesanta a unei proprietati.
+\vspace{2.5cm}
+\begin{enumerate}
+\item Lema cazMaxim1(rest : int, suma : int, solutieFinala : seq$<$int$>$) 
+\par
+\begin{lstlisting}
+	lemma cazMaxim1(rest : int, suma : int, solutieFinala : seq<int>)
+		requires rest < 5
+		requires esteSolutieValida(solutieFinala)
+		requires INV(rest, suma, solutieFinala)
+		ensures INV(rest-1, suma, [solutieFinala[0] + 1, solutieFinala[1], solutieFinala[2], solutieFinala[3], solutieFinala[4]])
+	{
+		
+		forall solutieCurenta | esteSolutieValida(solutieCurenta) && esteSolutieOptima(solutieCurenta, rest - 1) 
+		ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],
+		solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma)
+		{
+			assert esteSolutie(solutieCurenta, rest - 1);
+			assert esteSolutie([solutieCurenta[0] + 1, solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], solutieCurenta[4]], rest);
+			
+			assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) && esteSolutie(solutieOarecare, rest - 1) 
+			==> cost(solutieOarecare) >= cost(solutieCurenta);
+			
+			assert esteSolutie([solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],
+			solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma);
+			
+			assert forall solutieOarecare :: esteSolutieValida(solutieOarecare) &&  esteSolutie(solutieOarecare, suma) 
+			==> cost(solutieOarecare) >= cost([solutieCurenta[0] + solutieFinala[0] + 1, solutieCurenta[1] + solutieFinala[1],
+			solutieCurenta[2] + solutieFinala[2], solutieCurenta[3] + solutieFinala[3], solutieCurenta[4] + solutieFinala[4]]);
+		}
+		
+		assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) 
+		&& esteSolutieOptima(solutieCurenta, rest - 1) ==> 
+		esteSolutieOptima([solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],
+		solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma);
+	}
+\end{lstlisting} 
+\setlength{\parindent}{2em}
+\par
+Am creat un forall statement cu ajutorul caruia vom demonstra ca daca vom alege bancnota 1, vom crea o solutie oprima pentru variabila $suma$.
+\par
+Acest lucru il vom demonstra cu ajutorul assert-urilor. Cu ajutorul acestora vom verifica ce "stie" verificatorul Dafny si ce va trebui demonstrat separat cu ajutorul lemelor. 
+\par
+Forall statement-ul despre care am amintit mai sus va crea o solutie numita $solutieCurenta$ despre care stim ca este o solutie valida si ca este o solutie oprima pentru $rest-1$. 
+Spre exemplu, daca $rest = 4$, $suma = 54$ si $solutieFinala = [0,0,0,0,1]$ solutia aleasa de forall statement va fi $[3,0,0,0,0]$ care este solutie optima pentru 3. \par 
+Atfel, stiind ca $solutieCurenta$ este solutie optima pentru $rest-1$, este evidet ca aceasta este o solutie posibila pentru $rest-1$. Vom incerca sa modificam $solutieCurenta[0]+1$, pentru a crea o solutie posibila pentru $rest$.
+\par 
+Urmatorul pas este sa formam o noua solutie prin adunarea celor doua solutii cunoscute pentru a crea o solutie oprima pentru variabila $suma$: $[solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],solutieFinala[2] + \\ solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] +\\ solutieCurenta[4]]$.
+
+\item Lema cazMaxim50(rest : int, suma : int, solutieFinala : seq$<$int$>$)
+\par 
+\begin{lstlisting}
+lemma cazMaxim50(rest : int, suma : int, solutieFinala : seq<int>)
+	requires rest >= 50
+	requires esteSolutieValida(solutieFinala)
+	requires INV(rest, suma, solutieFinala)
+	ensures INV(rest - 50, suma, [solutieFinala[0], solutieFinala[1], solutieFinala[2], solutieFinala[3], 1 + solutieFinala[4]])
+{
+	assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>
+	(esteSolutie(solutieCurenta, rest) ==> 
+	esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3],solutieFinala[4] + solutieCurenta[4]], suma));
+	
+	forall solutieCurenta | esteSolutieValida(solutieCurenta) 
+	&& esteSolutie(solutieCurenta, rest - 50) 
+		ensures esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma)
+	{
+		assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], rest);
+	}
+	forall solutieCurenta | esteSolutieValida(solutieCurenta) 
+	&& esteSolutieOptima(solutieCurenta, rest - 50) 
+		ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma)
+	{
+		assert esteSolutie(solutieCurenta, rest - 50);
+		assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], rest);
+		
+		assert forall solutieOarecare :: esteSolutieValida(solutieOarecare)
+		&& esteSolutie(solutieOarecare, rest - 50) 
+		==> cost(solutieOarecare) >= cost(solutieCurenta);
+		
+		assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma);
+		
+		forall solutieOarecare | esteSolutieValida(solutieOarecare)
+		&& esteSolutie(solutieOarecare, suma)
+			ensures cost(solutieOarecare) >= cost([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]])
+		{
+			solutieFianalaAreCostMinim(rest, suma, solutieOarecare, solutieFinala, solutieCurenta);
+		}
+		assert forall solutieOarecare :: esteSolutieValida(solutieOarecare)
+		&& esteSolutie(solutieOarecare, suma) 
+		==> cost(solutieOarecare) >= cost([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]]);
+	}
+	assert forall solutieCurenta :: esteSolutieValida(solutieCurenta)
+	&& esteSolutieOptima(solutieCurenta, rest - 50) ==> 
+	esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma);
+	
+	assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>
+	(esteSolutie(solutieCurenta, rest - 50) ==> 
+	esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma));
+	
+	assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>        
+	(esteSolutieOptima(solutieCurenta, rest - 50) ==> 
+	esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma));
+	
+	assert  INV(rest - 50, suma, [solutieFinala[0], solutieFinala[1], solutieFinala[2], solutieFinala[3], 1 + solutieFinala[4]]);
+}
+\end{lstlisting}
+\par 
+Acesta lema are rolul de a demonstra ca prin alegerea bancnotei de 50 se va crea o solutie optima pentru $suma$.
+\par 
+Ceea ce stim este ca pentru orice solutie valida si posibila pentru $rest$, suma acesteia cu $solutieFinala$ va fi solutie pentru $suma$. Astfel,folosind un forall statement vom demonstra ca pentru orice $solutieCurenta$ care este solutie posibila pentru $rest-50$, suma acesteia cu $solutieFinala$ va crea o solutie pentru $suma$. \par 
+// de reformulat
+\par
+Urmatorul lucru care trebuie sa il demonstram este ca suma elementelor celor doua solutii este solutie optima pentru $suma$. Pentru aceasta demonstratie, am folosit un exchange argument pe care il voi prezenta in subsectiunea urmatoare.
 
 
 
 
+%$([solutieFinala[0] + $ \par $solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + $\par$ solutieCurenta[2], 
+%solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] +$ \par $ solutieCurenta[4]])$
+
+
+
+\end{enumerate}
+
+\subsection{Exchange Arguments}
+Exchange arguments este o tehnica folosita pentru a demonstra optimitatea unei solutii. Tehnica presupune modificarea unei solutii oarecare pentru a obtine o solutie optima pentru agloritmul greedy fara a-i modifica costul.\par 
+Dupa cum am mentionat anterior, pentru lemele $cazMaxim10$,$cazMaxim20$ si $cazMaxim50$ demonstrarea faptului ca suma dintre $solutieCurenta$ si $solutieFinala$ este solutie optima pentru $suma$ nu a mers inductiv ca in celalte leme, asa ca va trebui "sa ajutam" verificatorul Dafny.\par 
+In programul scris de mine, exista doua situatii in care intervine folosirea acestei tehnici: 
+\begin{itemize}
+	\item variabila $rest$ apartine unui interval, cum ar fi $10 <= rest <20 $ si $20 <= rest < 50$
+	\item variabila $rest$ are doar limita inferioara, cum ar fi $rest >= 50$.
+\end{itemize}
+\par 
+In ceea ce urmeaza o sa prezint cate un caz din fiecare situatie. 
+\par
+\vspace{2cm}
+\begin{enumerate}
+\item Situatia in care variabila $10 <= rest <20$ este reprezentata de lema exchangeArgumentCaz10(rest : int, solutieCurenta : seq$<$int$>$)
+\par 
+	
+\begin{lstlisting}
+lemma exchangeArgumentCaz10(rest : int, solutieCurenta : seq<int>)
+	requires 10 <= rest < 20
+	requires esteSolutieValida(solutieCurenta)
+	requires esteSolutieOptima(solutieCurenta, rest - 10)
+	ensures esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], rest)
+{
+	assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], rest);
+	if(!esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], rest))
+	{
+		var solutieOptima :|esteSolutieValida(solutieOptima) && esteSolutie(solutieOptima, rest) && cost(solutieOptima) < cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]]);
+		assert cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]]) == cost(solutieCurenta) + 1;
+		assert solutieOptima[3] == 0;
+		assert solutieOptima[4] == 0;
+		if(solutieOptima[2] >= 1)
+		{
+			var solutieOptima' := [solutieOptima[0], solutieOptima[1], solutieOptima[2] - 1, solutieOptima[3], solutieOptima[4]];
+			assert esteSolutie(solutieOptima', rest - 10);
+			assert cost(solutieOptima') == cost(solutieOptima) - 1;
+			assert cost(solutieOptima) - 1 < cost(solutieCurenta);
+			assert false;
+		}
+		else if(solutieOptima[1] >= 2)
+		{
+			var solutieOptima' := [solutieOptima[0], solutieOptima[1] - 2, solutieOptima[2], solutieOptima[3], solutieOptima[4]];
+			assert esteSolutie(solutieOptima', rest - 10);
+			assert cost(solutieOptima') == cost(solutieOptima) - 2;
+			assert cost(solutieOptima) - 2 < cost(solutieCurenta);
+			assert false;
+		}else if(solutieOptima[1] >= 1 && solutieOptima[0] >= 5)
+		{
+			var solutieOptima' := [solutieOptima[0] - 5, solutieOptima[1] - 1, solutieOptima[2], solutieOptima[3], solutieOptima[4]];
+			assert esteSolutie(solutieOptima', rest - 10);
+			assert cost(solutieOptima') == cost(solutieOptima) - 6;
+			assert cost(solutieOptima) - 6 < cost(solutieCurenta);
+			assert false;
+		}
+		else if(solutieOptima[0] >= 10)
+		{
+			var solutieOptima' := [solutieOptima[0] - 10, solutieOptima[1], solutieOptima[2], solutieOptima[3], solutieOptima[4]];
+			assert esteSolutie(solutieOptima', rest - 10);
+			assert cost(solutieOptima') == cost(solutieOptima) - 10;
+			assert cost(solutieOptima) - 10 < cost(solutieCurenta);
+			assert false;
+		}
+		else{
+			assert false;
+		}}}
+\end{lstlisting}
+\setlength{\parindent}{2em}
+\par
+Cu ajutorul acestei leme vom demonstra faptul ca solutia curenta construita astfel $[solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3],$ \ $ solutieCurenta[4]]$ este solutie optima pentru variabila $rest$.\par
+Pentru a demonstra acest lucru, vom crea o noua solutie numita $solutieOptima$ care are cost mai mic decat solutia curenta. Stim deja ca elementele \\ $solutieOptima[3]==0$ si $solutieOptima[4]==0$ asa ca ne putem concentra atentia pe primele 3 elemente ale solutiei. \par
+In cele ce urmeaza, vom cauta toate combinatiile din numere 1, 5 si 10 a caror suma este 10. Pentru fiecare combinatie se va crea o noua solutie $solutieOprima'$ astfel: se va scadea cate o bancnota cu valoarea respectiva din $solutieOptima$  pana cand suma acestora va fi 10. \par
+De exemplu, pentru cazul $1+1+1+1+1+5=10$ noua solutie va fi $var solutieOptima' := [solutieOptima[0] - 5, solutieOptima[1] - 1, solutieOptima[2], \\ solutieOptima[3], solutieOptima[4]]$, cu alte cuvinte am scazut 5 bancnote de valoare 1 si o bancnota de valoare 5. \par
+Stiind ca am scazut $n$ bancnote din $solutieOptima$ pentru a crea $solutieOptima'$ costul acesteia va fi $cost(solutieOptima) - n$, iar incercand sa comparam acest cost cu costul solutiei curente vom ajunge la o contradictie.
+\vspace{1cm}
+\item Situatia in care variabila $ rest <= 50$ este reprezentata de lema exchangeArgumentCaz50(rest : int, suma : int, solutieOarecare : seq$<$int$>$, solutieCurenta : seq$<$int$>$)
+\par 
+Codul pentru aceasta lema este foarte lung si nu il voi insera pe tot in acest document. Voi prezenta anumite instructiuni care au o importanta deosebita, iar secventele repetitive le voi inlocui cu un comentariu sugestiv.
+\par 
+Acesta lema are drept scop demonstrarea faptului ca variabila $solutieCurenta$ are un cost mai mic decat costul variabilei $solutieOarecare$.
+
+\begin{lstlisting}
+assert esteSolutie(solutieOarecare, rest);
+assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], rest);
+if(cost(solutieOarecare) < cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]]))
+{
+	if(solutieOarecare[4] > solutieCurenta[4] + 1)
+	{
+		assert cost([solutieOarecare[0], solutieOarecare[1], solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] - 1]) < cost(solutieCurenta);
+		assert esteSolutieOptima([solutieOarecare[0], solutieOarecare[1], solutieOarecare[2], solutieOarecare[3], solutieOarecare[4] - 1], rest - 50);
+		assert false;
+	}
+	else if(solutieOarecare[4] < solutieCurenta[4] + 1)
+	{
+		assert (solutieOarecare[0] + (5 * solutieOarecare[1])+(10 * solutieOarecare[2]) + (20 * solutieOarecare[3])) >= 50;
+		
+		if(solutieOarecare[2] >= 1 && solutieOarecare[3] >= 2)
+		{
+			var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1], solutieOarecare[2] - 1, solutieOarecare[3] - 2, solutieOarecare[4] + 1];
+			exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
+		}
+		//combinatiile de 1,5,10 si 20 a caror suma este 50
+		else{
+			assert solutieOarecare[0] >= 0;
+			assert solutieOarecare[1] >= 0;
+			assert solutieOarecare[2] >= 0;
+			assert solutieOarecare[3] >= 3;
+			if(solutieOarecare[3] >= 3)
+			{
+				var nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1], solutieOarecare[2] + 1, solutieOarecare[3] - 3, solutieOarecare[4] + 1];
+				assert cost(nouaSolutieOarecare) < cost(solutieOarecare);
+				exchangeArgumentCaz50(rest, suma, nouaSolutieOarecare, solutieCurenta);
+			}
+		}
+	}
+	assert solutieOarecare[4] == (solutieCurenta[4] + 1);
+
+\end{lstlisting}
+\par
+Secventa de cod de mai sus 
+
+
+\end{enumerate}
 
 
 
 
-
-
-
-
-
-
-
+\section{Probleme "interesante" intalnite}
 
 
 

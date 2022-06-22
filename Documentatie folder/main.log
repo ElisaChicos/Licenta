@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2022.6.18)  22 JUN 2022 01:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2022.6.18)  23 JUN 2022 01:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -662,7 +662,7 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 6.
 LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <20.74> not available
 (Font)              Font shape `OT1/ppl/b/n' tried instead on input line 9.
-<images/logoFii.png, id=120, 193.47281pt x 188.95593pt>
+<images/logoFii.png, id=132, 193.47281pt x 188.95593pt>
 File: images/logoFii.png Graphic file (type png)
 <use images/logoFii.png>
 Package pdftex.def Info: images/logoFii.png  used on input line 13.
@@ -803,12 +803,72 @@ File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/pcr/b/n' tried instead on input line 45.
  [12] [13]
-[14] [15]) (./chapters/conclusions.tex [16]) (./chapters/bibliography.tex
-[17
+[14] [15]
+Overfull \hbox (24.30417pt too wide) in paragraph at lines 180--181
+[]\OT1/ppl/m/n/12 In bu-cla $\OML/cmm/m/it/12 while$ \OT1/ppl/m/n/12 se va cal-
+cula, la fiecare pas, cu aju-torul un-eii metode $\OML/cmm/m/it/12 gasireMaxim\
+OT1/cmr/m/n/12 (\OML/cmm/m/it/12 rest\OT1/cmr/m/n/12 )$
+ []
+
+[16]
+Overfull \hbox (15.35306pt too wide) in paragraph at lines 202--202
+\OT1/ppl/m/n/12 Spre ex-em-plu, pen-tru $\OML/cmm/m/it/12 s \OT1/cmr/m/n/12 = 1
+$\OT1/ppl/m/n/12 , unde $\OML/cmm/m/it/12 s$ \OT1/ppl/m/n/12 este val-oarea re-
+tur-nata de metoda $\OML/cmm/m/it/12 gasireMaxim\OT1/cmr/m/n/12 (\OML/cmm/m/it/
+12 rest\OT1/cmr/m/n/12 )$\OT1/ppl/m/n/12 ,
+ []
+
+[17] [18] [19]
+Overfull \hbox (19.12753pt too wide) in paragraph at lines 250--251
+\OT1/ppl/m/n/12 tii cunos-cute pen-tru a crea o so-lu-tie oprima pen-tru vari-a
+bila $\OML/cmm/m/it/12 suma$\OT1/ppl/m/n/12 : $\OT1/cmr/m/n/12 [\OML/cmm/m/it/1
+2 solutieFinala\OT1/cmr/m/n/12 [0] +
+ []
+
+[20] [21] [22] [23] [24]
+Overfull \hbox (10.70746pt too wide) in paragraph at lines 394--394
+\OT1/ppl/m/n/12 ast-fel $\OT1/cmr/m/n/12 [\OML/cmm/m/it/12 solutieCurenta\OT1/c
+mr/m/n/12 [0]\OML/cmm/m/it/12 ; solutieCurenta\OT1/cmr/m/n/12 [1]\OML/cmm/m/it/
+12 ; solutieCurenta\OT1/cmr/m/n/12 [2] + 1\OML/cmm/m/it/12 ; solutieCurenta\OT1
+/cmr/m/n/12 [3]\OML/cmm/m/it/12 ;$
+ []
+
+[25]
+Overfull \hbox (6.91116pt too wide) in paragraph at lines 395--395
+[]\OT1/ppl/m/n/12 Pentru a demon-stra acest lu-cru, vom crea o noua so-lu-tie n
+u-mita $\OML/cmm/m/it/12 solutieOptima$
+ []
+
+
+Overfull \hbox (1.51358pt too wide) in paragraph at lines 397--397
+\OML/cmm/m/it/12 varsolutieOptima[] \OT1/cmr/m/n/12 := [\OML/cmm/m/it/12 soluti
+eOptima\OT1/cmr/m/n/12 [0] \OMS/cmsy/m/n/12 ^^@ \OT1/cmr/m/n/12 5\OML/cmm/m/it/
+12 ; solutieOptima\OT1/cmr/m/n/12 [1] \OMS/cmsy/m/n/12 ^^@ \OT1/cmr/m/n/12 1\OM
+L/cmm/m/it/12 ; solutieOptima\OT1/cmr/m/n/12 [2]\OML/cmm/m/it/12 ; [] 
+ []
+
+
+Overfull \hbox (5.77971pt too wide) in paragraph at lines 398--400
+[]\OT1/ppl/m/n/12 Stiind ca am scazut $\OML/cmm/m/it/12 n$ \OT1/ppl/m/n/12 banc
+-note din $\OML/cmm/m/it/12 solutieOptima$ \OT1/ppl/m/n/12 pen-tru a crea $\OML
+/cmm/m/it/12 solutieOptima[]$
+ []
+
+
+Overfull \hbox (2.6147pt too wide) in paragraph at lines 404--405
+[]\OT1/ppl/m/n/12 Acesta lema are drept scop demon-strarea fap-tu-lui ca vari-a
+bila $\OML/cmm/m/it/12 solutieCurenta$
+ []
+
+[26]
+LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10.95> not available
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 426.
+ [27]) (./chapters/conclusions.tex [28]) (./chapters/bibliography.tex
+[29
 
 ])
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 58.
- [18
+ [30
 
 ]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 58.
@@ -816,17 +876,17 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 58.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 58.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 58.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 7E14ED31DD73962B0AC79D56451808B6;5559.
+(rerunfilecheck)             Checksum: 05ABB437FAA2017D3E7C1E2D39AA286A;6239.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 58.
  ) 
 Here is how much of TeX's memory you used:
- 11424 strings out of 494923
- 156676 string characters out of 6180742
- 289885 words of memory out of 5000000
- 14424 multiletter control sequences out of 15000+600000
- 25877 words of font info for 68 fonts, out of 8000000 for 9000
+ 11633 strings out of 494923
+ 159743 string characters out of 6180742
+ 285885 words of memory out of 5000000
+ 14442 multiletter control sequences out of 15000+600000
+ 26494 words of font info for 70 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 35i,8n,58p,917b,1918s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 35i,8n,58p,917b,1956s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist
@@ -836,12 +896,13 @@ ublic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
 sfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb
 ></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/urw/palatino/uplr8a.pfb>
-Output written on main.pdf (23 pages, 171153 bytes).
+texlive/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/share/texlive/texmf-dist/fonts
+/type1/urw/palatino/uplr8a.pfb>
+Output written on main.pdf (35 pages, 202679 bytes).
 PDF statistics:
- 459 PDF objects out of 1000 (max. 8388607)
- 416 compressed objects within 5 object streams
- 174 named destinations out of 1000 (max. 500000)
- 238 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 744 PDF objects out of 1000 (max. 8388607)
+ 686 compressed objects within 7 object streams
+ 363 named destinations out of 1000 (max. 500000)
+ 262 words of extra memory for PDF output out of 10000 (max. 10000000)
 

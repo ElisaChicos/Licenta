@@ -101,7 +101,6 @@ lemma cazMaxim1(rest : int, suma : int, solutieFinala : seq<int>)
           && esteSolutieOptima(solutieCurenta, rest - 1) ==> 
           esteSolutieOptima([solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],
           solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] + solutieCurenta[4]], suma);
-
 }
 
 lemma cazMaxim5(rest : int, suma : int, solutieFinala : seq<int>)
@@ -146,7 +145,8 @@ lemma exchangeArgumentCaz10(rest : int, solutieCurenta : seq<int>)
     assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], rest);
     if(!esteSolutieOptima([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]], rest))
     {
-      var solutieOptima :|esteSolutieValida(solutieOptima) && esteSolutie(solutieOptima, rest) && cost(solutieOptima)<cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]]);
+      var solutieOptima :|esteSolutieValida(solutieOptima) && esteSolutie(solutieOptima, rest) && 
+        cost(solutieOptima) < cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]]);
       assert cost([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3], solutieCurenta[4]]) == cost(solutieCurenta) + 1;
       assert solutieOptima[3] == 0;
       assert solutieOptima[4] == 0;
@@ -797,7 +797,7 @@ lemma exchangeArgumentCaz50(rest : int, suma : int, solutieOarecare : seq<int>, 
   }
 }
 
-lemma esteSolutiePentruRest(rest : int, suma : int, solutieCurenta : seq<int>)
+lemma solutieCurentaAreCostMinim(rest : int, suma : int, solutieCurenta : seq<int>)
   requires esteSolutieValida(solutieCurenta)
   requires rest >= 50
   requires esteSolutie(solutieCurenta, rest - 50)
@@ -824,7 +824,7 @@ lemma solutieFianalaAreCostMinim(rest : int, suma : int, solutieOarecare : seq<i
   requires INV(rest, suma, solutieFinala)
   ensures cost(solutieOarecare) >= cost([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]])
 {
-  esteSolutiePentruRest(rest, suma, solutieCurenta);
+  solutieCurentaAreCostMinim(rest, suma, solutieCurenta);
 }
 
 
@@ -838,11 +838,13 @@ lemma cazMaxim50(rest : int, suma : int, solutieFinala : seq<int>)
 {
   assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>
           (esteSolutie(solutieCurenta, rest) ==> 
-          esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3],solutieFinala[4] + solutieCurenta[4]], suma));
+          esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2],
+           solutieFinala[3] + solutieCurenta[3],solutieFinala[4] + solutieCurenta[4]], suma));
 
    forall solutieCurenta | esteSolutieValida(solutieCurenta) 
           && esteSolutie(solutieCurenta, rest - 50) 
-          ensures esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma)
+          ensures esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], 
+          solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma)
    {
      assert esteSolutie([solutieCurenta[0], solutieCurenta[1], solutieCurenta[2], solutieCurenta[3], 1 + solutieCurenta[4]], rest);
    }
@@ -850,7 +852,8 @@ lemma cazMaxim50(rest : int, suma : int, solutieFinala : seq<int>)
 
   forall solutieCurenta | esteSolutieValida(solutieCurenta) 
           && esteSolutieOptima(solutieCurenta, rest - 50) 
-          ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma)
+          ensures esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2],
+           solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma)
   {
 
     assert esteSolutie(solutieCurenta, rest - 50);
@@ -861,7 +864,8 @@ lemma cazMaxim50(rest : int, suma : int, solutieFinala : seq<int>)
           ==> cost(solutieOarecare) >= cost(solutieCurenta);
 
 
-    assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma);
+    assert esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], 
+      solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma);
 
     forall solutieOarecare | esteSolutieValida(solutieOarecare)
                  && esteSolutie(solutieOarecare, suma)
@@ -878,16 +882,19 @@ lemma cazMaxim50(rest : int, suma : int, solutieFinala : seq<int>)
 
   assert forall solutieCurenta :: esteSolutieValida(solutieCurenta)
           && esteSolutieOptima(solutieCurenta, rest - 50) ==> 
-          esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma);
+          esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2],
+           solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma);
 
 
   assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>
           (esteSolutie(solutieCurenta, rest - 50) ==> 
-          esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma));
+          esteSolutie([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], 
+          solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma));
   
   assert forall solutieCurenta :: esteSolutieValida(solutieCurenta) ==>        
           (esteSolutieOptima(solutieCurenta, rest - 50) ==> 
-          esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma));
+          esteSolutieOptima([solutieFinala[0] + solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + solutieCurenta[2],
+           solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] + solutieCurenta[4]], suma));
 
   assert  INV(rest - 50, suma, [solutieFinala[0], solutieFinala[1], solutieFinala[2], solutieFinala[3], 1 + solutieFinala[4]]);
 }

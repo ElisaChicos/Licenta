@@ -25,5 +25,8 @@
 \contentsline {section}{\numberline {4.2}Implementarea algoritmului Greedy}{12}{section.4.2}
 \contentsline {subsection}{\numberline {4.2.1}Predicate si functii }{12}{subsection.4.2.1}
 \contentsline {subsection}{\numberline {4.2.2}Algoritmul Greedy}{14}{subsection.4.2.2}
-\contentsline {chapter}{Concluzii}{17}{chapter*.5}
-\contentsline {chapter}{Bibliografie}{18}{chapter*.6}
+\contentsline {subsection}{\numberline {4.2.3}Leme importante in demonstrarea corectitudinii}{17}{subsection.4.2.3}
+\contentsline {subsection}{\numberline {4.2.4}Exchange Arguments}{23}{subsection.4.2.4}
+\contentsline {section}{\numberline {4.3}Probleme "interesante" intalnite}{28}{section.4.3}
+\contentsline {chapter}{Concluzii}{29}{chapter*.5}
+\contentsline {chapter}{Bibliografie}{30}{chapter*.6}
