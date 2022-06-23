@@ -45,12 +45,8 @@ Strategia Greedy constă în alegerea, la fiecare pas, a bancnotei cele mai mari
 Folosind exemplul de mai sus, prima decizie făcută de strategia noastră este alegerea bancnotei de 100 deoarece $ 100 	\leq 157$.  Decizia făcută are ca rezultat adăugarea valorii 1 la soluția finală iar suma pe care trebuie să o plătim scade cu 100, astfel încât la pasul următor va trebui să o plătim 57. Acest algoritm se va repetă până când suma va fi 0.
 
 
-
-// exemplu desen pași 
-
 \section{Limitarea Strategiei Greedy}
 Limitarea strategiei alese este că există posibilitatea ca acesta să nu ofere soluția optimă pentru toate datele de intrare.\par
 De exemplu, dacă mulțimea de bancnote este formată din $B = \{ 1,6,9 \}$ iar suma care trebuie plătită este $s = 12$, soluția optimă generată de strategia aleasă va fi $\{3,0,1\}$. Cu toate acestea, soluția cu adevărat optimă va fi $\{0,2,0\}$. 
-\\exemplu
 
 Motivul pentru care se produce această "eroare" este că soluția este construită pas cu pas. La fiecare pas, se alege bancnotă care va crea cel mai mic cost pentru soluția curentă chiar dacă în viitor ar există o altă soluție cu cost mai mic.

@@ -7,16 +7,48 @@ Greedy este o strategie de rezolvare a problemelor de optimizare. Metoda presupu
 O problemă de optimizare este o problema care are un input oarecare dar output-ul ei trebuie să fie o valoare maximă sau minimă.
 În funcție de ce ne cere problema, această poate fi de două feluri: 
 \begin{enumerate}
-	\item Problema de minimizare 
+	\item Problema de minimizare $\rightarrow$ rezultatul trebuie să fie de cost minim
 	\par
-	\fbox{\parbox{5.5in}{// de revenit }}
+	\fbox{\parbox{5.5in}{
+	\setlength{\parindent}{0em}
+	Input:\par
+	\setlength{\parindent}{2em}
+	$\bullet$ G = (V,E) - graf hamiltonial care are pe fiecare muchie un cost
+	\par 
+	\setlength{\parindent}{0em}
+	Output:\par
+	\setlength{\parindent}{2em}
+	$\bullet$ A $\subseteq \{0,...m\}$, unde $ 0 < m <= |E|$ iar A este o multime de muchii a caror suma este minima. 
+ }}
+	\par 
+	\setlength{\parindent}{2em}
+	În problema de mai sus, avem ca input avem un graf hamiltonian în care fiecare muchie $E$ are un anumit cost. Problema cere să se returneze o mulțime A care conține muchii ale grafului ce formează un ciclu de cost minim.
 	\par
-	%Scopul acestei probleme este de a găși valoarea care rezolvă problema și are cost minim
-	\item Problema de maximizare
+	\vspace{4cm}
+	\setlength{\parindent}{0em}
+	\item Problema de maximizare $\rightarrow$ rezultatul trebuie sa fie de câștig maxim
 	\par
-	\fbox{\parbox{5.5in}{// de revenit}}
+	\fbox{\parbox{5.5in}{
+	\setlength{\parindent}{0em}
+	Input:\par
+	\setlength{\parindent}{2em}
+	$\bullet$ G = (V,E) - graf neorientat care are pe fiecare muchie un cost \par 
+	$\bullet$ a - nod al grafului G \par 
+	$\bullet$ b - nod al grafului G \par
+	\par 
+	\setlength{\parindent}{0em}
+	Output:\par
+	\setlength{\parindent}{2em}
+	$\bullet$ A $\subseteq \{0,...m\}$, unde $ 0 <= m <= |E|$ iar A este o multime de muchii a caror suma este minima. 
+}}
+\par 
+\setlength{\parindent}{2em}
+Problema de mai sus primește ca input un graf în care fiecare muchie $E$ are un câștig și două noduri $a$ și $b$ și se cere să se găsească un drum între cele două noduri care să aibă câștig maxim.
+
+
 \end{enumerate}
 
+\vspace{0.5cm}
 În funcție de decizia făcută de metoda Greedy, vom crea soluții posibile. O soluție posibilă este o submultime care satisface cerințele problemei, în timp ce o soluție optimă respectă cerințele date și are cost minim sau câștig maxim.
 \par 
 Dacă mai multe soluții îndeplinesc criteriile date, atunci acele soluții vor fi considerate ca fiind posibile, în timp ce soluția optimă este cea mai bună dintre toate soluțiile.
@@ -48,7 +80,6 @@ O posibilă formulare a acestei probleme este: \par
 		\setlength{\parindent}{2em}
 		$\bullet$ A $\subseteq$ $\{$ 0, ..., n-1 $\}$, unde A este o mulțime de activități care nu se\par suprapun și este de cardinal maxim;
 }}
-
 \par
 \vspace{1cm}
 Spre exmplu putem avea această mulțime de activități reprezentate în tabelul de mai jos:
