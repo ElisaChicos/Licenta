@@ -1,0 +1,29 @@
+\babel@toc {romanian}{}\relax 
+\contentsline {chapter}{Motivație}{2}{chapter*.2}%
+\contentsline {chapter}{Intenție}{3}{chapter*.3}%
+\contentsline {chapter}{Introducere}{4}{chapter*.4}%
+\contentsline {chapter}{\numberline {1}Paradigma Greedy}{5}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Ce este o problemă de optimizare și cum lucrează \\ metoda Greedy cu aceasta?}{5}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Algoritmi Greedy}{6}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Problema Selecției Activităților}{6}{subsection.1.2.1}%
+\contentsline {section}{\numberline {1.3}Avantaje și dezavantaje ale algoritmilor Greedy}{8}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Problema Bancnotelor}{9}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Ce este Problema Bancnotelor?}{9}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Formularea problemei}{9}{subsection.2.1.1}%
+\contentsline {section}{\numberline {2.2}Strategia Greedy aleasă}{10}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Limitarea Strategiei Greedy}{10}{section.2.3}%
+\contentsline {chapter}{\numberline {3}Dafny}{11}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Limbajul de programare Dafny}{11}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Avantajele folosirii limbajului Dafny}{11}{section.3.2}%
+\contentsline {chapter}{\numberline {4}Detalii de implementare}{12}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Reprezentarea datelor de intrare și a celor de ieșire}{12}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Varibilele folosite, tipurile și semnificația acestora}{12}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Descrierea soluției rezultate}{12}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Implementarea algoritmului Greedy}{13}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Predicate și funcții }{13}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Algoritmul Greedy}{15}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Leme importante în demonstrarea corectitudinii}{18}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}Exchange Arguments}{24}{subsection.4.2.4}%
+\contentsline {section}{\numberline {4.3}Probleme "interesante" intalnite}{30}{section.4.3}%
+\contentsline {chapter}{Concluzii}{32}{chapter*.5}%
+\contentsline {chapter}{Bibliografie}{33}{chapter*.6}%
