@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2022.6.18)  23 JUN 2022 01:12
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2022.6.18)  23 JUN 2022 03:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -863,12 +863,61 @@ bila $\OML/cmm/m/it/12 solutieCurenta$
 [26]
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10.95> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 426.
- [27]) (./chapters/conclusions.tex [28]) (./chapters/bibliography.tex
-[29
+ [27]
+Overfull \hbox (25.71347pt too wide) in paragraph at lines 447--447
+\OT1/ppl/m/n/12 so-lu-tie nu-mita $\OML/cmm/m/it/12 nouaSolutieOarecare$ \OT1/p
+pl/m/n/12 for-mata din el-e-mentele secven-tei $\OML/cmm/m/it/12 solutieOarecar
+e$
+ []
+
+[28]
+Overfull \hbox (23.73254pt too wide) in paragraph at lines 456--456
+[]\OT1/ppl/m/n/12 Problema care m-a "in-cur-cat" am intampinat-o la lema ex-cha
+ngeAr-gu-ment-Caz50(rest:
+ []
+
+
+Overfull \hbox (9.45033pt too wide) in paragraph at lines 458--458
+\OT1/ppl/m/n/12 posi-bile, lema nu putea sa demon-streze ca $\OML/cmm/m/it/12 s
+olutieOarecare\OT1/cmr/m/n/12 [4] == \OML/cmm/m/it/12 solutieCurenta\OT1/cmr/m/
+n/12 [4][] 
+ []
+
+
+Overfull \hbox (18.48616pt too wide) in paragraph at lines 461--461
+\OT1/ppl/m/n/12 pot adauga 2 banc-note de 50 de lei $\OML/cmm/m/it/12 solutieOa
+recare\OT1/cmr/m/n/12 [4] + 2$ $\OMS/cmsy/m/n/12 !$ \OT1/ppl/m/n/12 eroare: $\O
+ML/cmm/m/it/12 solutieOarecare\OT1/cmr/m/n/12 [3]$
+ []
+
+
+Overfull \hbox (5.36227pt too wide) in paragraph at lines 462--462
+[]\OT1/ppl/m/n/12 Incercarea 2: Am in-cer-cat sa verific daca $\OML/cmm/m/it/12
+ solutieOarecare\OT1/cmr/m/n/12 [0] + 5 \OMS/cmsy/m/n/12 ^^A \OML/cmm/m/it/12 s
+olutieOarecare\OT1/cmr/m/n/12 [1] +
+ []
+
+
+Overfull \hbox (14.82869pt too wide) in paragraph at lines 462--462
+\OT1/cmr/m/n/12 10 \OMS/cmsy/m/n/12 ^^A \OML/cmm/m/it/12 solutieOarecare\OT1/cm
+r/m/n/12 [2] \OML/cmm/m/it/12 >\OT1/cmr/m/n/12 = 100$ \OT1/ppl/m/n/12 pen-tru a
+ putea adauga val-oarea 5 la $\OML/cmm/m/it/12 solutieOarecare\OT1/cmr/m/n/12 [
+3]$
+ []
+
+
+Overfull \hbox (12.76353pt too wide) in paragraph at lines 463--465
+\OT1/ppl/m/n/12 ($\OML/cmm/m/it/12 nouaSolutieOarecare \OT1/cmr/m/n/12 := [\OML
+/cmm/m/it/12 solutieOarecare\OT1/cmr/m/n/12 [0]\OML/cmm/m/it/12 ; solutieOareca
+re\OT1/cmr/m/n/12 [1]\OML/cmm/m/it/12 ; solutieOarecare\OT1/cmr/m/n/12 [2][] 
+ []
+
+[29]) (./chapters/conclusions.tex [30]) (./chapters/bibliography.tex [31
 
 ])
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 58.
- [30
+
+[32
 
 ]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 58.
@@ -880,8 +929,8 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 58.
  ) 
 Here is how much of TeX's memory you used:
- 11633 strings out of 494923
- 159743 string characters out of 6180742
+ 11635 strings out of 494923
+ 159757 string characters out of 6180742
  285885 words of memory out of 5000000
  14442 multiletter control sequences out of 15000+600000
  26494 words of font info for 70 fonts, out of 8000000 for 9000
@@ -899,10 +948,10 @@ sfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
 texlive/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/share/texlive/texmf-dist/fonts
 /type1/urw/palatino/uplr8a.pfb>
-Output written on main.pdf (35 pages, 202679 bytes).
+Output written on main.pdf (37 pages, 207461 bytes).
 PDF statistics:
- 744 PDF objects out of 1000 (max. 8388607)
- 686 compressed objects within 7 object streams
- 363 named destinations out of 1000 (max. 500000)
+ 755 PDF objects out of 1000 (max. 8388607)
+ 695 compressed objects within 7 object streams
+ 365 named destinations out of 1000 (max. 500000)
  262 words of extra memory for PDF output out of 10000 (max. 10000000)
 

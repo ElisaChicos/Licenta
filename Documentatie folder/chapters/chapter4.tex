@@ -441,15 +441,52 @@ if(cost(solutieOarecare) < cost([solutieCurenta[0], solutieCurenta[1], solutieCu
 
 \end{lstlisting}
 \par
-Secventa de cod de mai sus 
-
-
+Incepem demonstratia prin a verifica daca $solutieOarecare$ are costul mai mic decat  $cost(solutieCurenta)$. In caz afirmativ, vom incepe sa comparam elementele din cele doua solutii: $solutieOarecare[4] > solutieCurenta[4] + 1$ ,\\ $solutieOarecare[3] > solutieCurenta[3]$, $solutieOarecare[2] > solutieCurenta[2]$, $solutieOarecare[1] > solutieCurenta[1]$ si $solutieOarecare[0] > solutieCurenta[0]$.  \par   
+Secventa de cod adaugata mai sus contine doar compararea elementelor de pe pozitia 4 deoarece aceasta este cea mai complexa parte. \par
+Daca $solutieOarecare[4] > solutieCurenta[4] + 1$  atunci solutia \\ $[solutieOarecare[0], solutieOarecare[1], solutieOarecare[2], solutieOarecare[3], \\ solutieOarecare[4] - 1]$ are costul mai mic decat costul solutiei curente si este solutie optima pentru $rest-50$, lucru care este fals.\par
+In schimb, daca $solutieOarecare[4] < solutieCurenta[4] + 1$ vom crea o noua solutie numita $nouaSolutieOarecare$ formata din elementele secventei $solutieOarecare$ din care am scazut bancnotele a caror suma este egala cu 50 si am incrementat valoarea elementului de pe pozitia 4, apoi, cu ajutorul unui apel recursiv, vom compara $nouaSolutieOarecare$ cu $solutieCurenta$ pana cand acestea vor fi egale.\par
+Similar se intampla si cu celelalte trei comparatii pe care le-am enumerat mai sus. Se vor crea noi solutii pana cand elementele din $solutieOarecare$ si $solutieCurenta$ vor fi egale.
 \end{enumerate}
-
+\vspace{1cm}
 
 
 
 \section{Probleme "interesante" intalnite}
+Pe parcursul realizarii acestui algoritm si a demonstrarii corectitudinii sale am intampinat mai multe probleme care m-au pus in dificultate. \par  
+Problema care m-a "incurcat" am intampinat-o la lema exchangeArgumentCaz50(rest: int, suma : int, solutieOarecare : seq$<$int$>$, solutieCurenta : seq$<$int$>$). Dupa cum am prezentat anterior, pentru a demonstra ca $solutieOarecare[4] == solutieCurenta[4] + 1$, cu alte cuvinte, daca ambele solutii contineau acelasi numar de bancnote de valoare 50, a trebuit sa caut toate combinatiile de valori de 1,5,10 si 20 a caror suma este 50 si sa creez o noua solutie. \par 
+\begin{itemize}
+	\item Problema 1: Dupa ce am adaugat in lema toate cele 53( !! de verificat) de cazuri posibile, lema nu putea sa demonstreze ca $solutieOarecare[4] == solutieCurenta[4] \\ + 1$, ceea ce insemna ca imi lipseste un caz.\par
+	Rezulvarea problemei 1: In ultima instructiune $else$ am adaugat cateva assert-uri pentru a afla ce caz sau cazuri am ratat. Spre surprinderea mea,\\ $solutieOarecare[0]==solutieOarecare[1]==solutieOarecare[2]==0$ iar \\ $solutieOarecare[3]==3$  asta insemna ca aveam 60 de lei formati din 3 bancnote de 20 de lei.
+	\item Problema 2: Cum as putea sa tratez acest caz?\par 
+	Incercarea 1: Am incercat sa verific daca $solutieOarecare[3]>=5$ astfel incat sa pot adauga 2 bancnote de 50 de lei $solutieOarecare[4]+2$ $\rightarrow$ eroare: $solutieOarecare[3]$ nu este mai mare sau egal cu 5.\par
+	Incercarea 2: Am incercat sa verific daca $ solutieOarecare[0]+ 5 \cdot solutieOarecare[1]+10\cdot solutieOarecare[2] >=100$ pentru a putea adauga valoarea 5 la $solutieOarecare[3]$ si sa pot reveni la ideea de la "Incercarea 1" $\rightarrow$ eroare: suma elementelor nu este mai mare sau egala cu 100. \par
+	Incercare 3: Am incercat sa tratez cazul astfel: cele 3 bancnote de 20 le voi transforma intr-o bancnota de 50 iar bancnota de 10 ramasa o voi aduna la celalate pe care le am in solutie, astfel, creand o noua solutie cu un cost mai mic \\
+	($nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1], solutieOarecare[2] \\ + 1, solutieOarecare[3] - 3, solutieOarecare[4] + 1]$) $\rightarrow$ eroare: "decreases clase might not decrease"
+	\item Problema 3: Eroarea "decrease clase might not decrease" aparuse deoarece in adnotatiile lemei initial exista $decreases \ solutieOarecare[0], solutieOarecare[1],\\ solutieOarecare[2],solutieOarecare[3]$ ceea ce ne asigura ca elementele secventei $solutieOarecare$ vor descreste. In incercarea mea de a trata cazul ramas, incercam sa adaug "restul" in $solutieOarecare[2]$ si incalcam adnotarea specificata mai sus.
+	\par 
+	Rezolvarea problemei 2: Cum scopul pricipal al lemei era de a demonstra ca $solutieCurenta$ are cost minim am modificat adnotarea astfel $decreases  \\ solutieOarecare[0] + solutieOarecare[1] + solutieOarecare[2] + solutieOarecare[3]$ deoarece este suficient sa descreasca suma acestora pentru a ajunge la o solutie cu cost mai mic.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+\end{itemize}
+
+
+
+
+
+
+
+
+
 
 
 
