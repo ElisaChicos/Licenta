@@ -964,7 +964,7 @@ lemma cazMaxim50(rest : int, suma : int, solutieFinala : seq<int>)
 
 method Main() {
   var suma := 188;
-  var solutia := nrMinimBancnote(suma);
+  var solutie := nrMinimBancnote(suma);
   print "Solutia este = ";
   print "1: ";
   print solutie[0];

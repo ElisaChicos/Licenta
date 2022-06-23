@@ -1,4 +1,4 @@
-// Dafny program seq.dfy compiled into C#
+// Dafny program problemaBancnotelor.dfy compiled into C#
 // To recompile, you will need the libraries
 //     System.Runtime.Numerics.dll System.Collections.Immutable.dll
 // but the 'dotnet' tool in net6.0 should pick those up automatically.
@@ -8,8 +8,8 @@
 using System;
 using System.Numerics;
 [assembly: DafnyAssembly.DafnySourceAttribute(@"// Dafny 3.6.0.40511
-// Command Line Options: c:\Users\chico\Documents\GitHub\Licenta\seq.dfy /spillTargetCode:1 /compile:3 /out:binseq
-// seq.dfy
+// Command Line Options: c:\Users\chico\Documents\GitHub\Licenta\problemaBancnotelor.dfy /spillTargetCode:1 /compile:3 /out:binproblemaBancnotelor
+// problemaBancnotelor.dfy
 
 predicate esteSolutieValida(solutie: seq<int>)
   decreases solutie
