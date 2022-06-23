@@ -166,11 +166,13 @@ Preconditiile sunt expresii booleene care trebuie sa fie adevarate pentru variab
 \par 
 Preconditia $requires \ \ suma >= 0$ ne indica faptul ca suma trebuie sa fie mai mare sau egala cu 0 pentru a se putea parcurge metoda.\par 
 \vspace{0.5cm}
- \fbox{\parbox{5.5in}{
- 		ensures esteSolutieValida(solutie) \par 
- 		ensures esteSolutie(solutie, suma)\par
- 		ensures esteSolutieOptima(solutie, suma)
-	}}
+\begin{lstlisting}
+	ensures esteSolutieValida(solutie) 
+	ensures esteSolutie(solutie, suma)
+	ensures esteSolutieOptima(solutie, suma)
+\end{lstlisting}
+ 		
+
 \par
 \vspace{0.25cm}
 Aceste trei postconditii se focuseaza pe solutia returnata de metoda. Solutia trebuie sa fie valida, sa fie o solutie posibila pentru suma care trebuie platita si totodata sa fie si solutie oprima pentru aceasta.
