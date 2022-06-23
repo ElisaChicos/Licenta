@@ -12,34 +12,38 @@
 	tabsize=3}
 
 \chapter{Detalii de implementare}
-In acest capitol voi prezenta detaliile de implementare a algoritmului cat si modul in care am demonstrat corectitudinea codului utilizand Dafny.
-\section{Reprezentarea datelor de intrare si a celor de iesire}
+În acest capitol voi prezenta detaliile de implementare a algoritmului cât și modul în care am demonstrat corectitudinea codului utilizând Dafny.
+\section{Reprezentarea datelor de intrare și a celor de ieșire}
 
-\subsection{Varibilele folosite, tipurile si semnificatia acestora}
+\subsection{Varibilele folosite, tipurile și semnificația acestora}
 
 \begin{itemize}
-	\item suma : $int$ $\rightarrow$ reprezinta suma pe care trebuie sa o platim 
-	\item rest : $int$ $\rightarrow$ reprezinta suma care ne-a ramas de platit dupa ce am ales o bancnota
-	\item solutieFinala : $seq<int>$ $\rightarrow$ reprezinta solutia finala a problemei 
-	\item solutieCurenta : $seq<int>$ $\rightarrow$ reprezinta solutia creata pana la pasul curent
-	\item solutieOarecare  : $seq<int>$ $\rightarrow$ reprezinta o solutie pe care am folosit-o pentru a demonstra corectitudinea programului
+	\item suma : $int$ $\rightarrow$ reprezintă suma pe care trebuie să o plătim 
+	\item rest : $int$ $\rightarrow$ reprezintă suma care ne-a rămas de plătit după ce am ales o bancnotă
+	\item solutieFinala : $seq<int>$ $\rightarrow$ reprezintă soluția finală a problemei 
+	\item solutieCurenta : $seq<int>$ $\rightarrow$ reprezintă soluția creată până la pasul curent
+	\item solutieOarecare  : $seq<int>$ $\rightarrow$ reprezintă o soluție pe care am folosit-o pentru a demonstra corectitudinea programului
 \end{itemize}
 
-\subsection{Descrierea solutiei rezultate}
-Bancnotele folosite de mine pentru rezolvarea acestei probleme sunt $B = \{1, 5, 10, 20, 50\}$, astfel, solutia problemei va fi o secventa de numere naturale $ solutie = \{n_1,n_5,n_{10},n_{20},n_{50} \}$ unde $n_i$ va numarul de $i$ bancnote folosite iar 
+\subsection{Descrierea soluției rezultate}
+Bancnotele folosite de mine pentru rezolvarea acestei probleme sunt $B = \{1, 5, 10, 20, 50\}$, astfel, soluția problemei va fi o secvență de numere naturale $ soluție = \{n_1,n_5,n_{10},n_{20},n_{50} \}$ unde $n_i$ va numărul de $i$ bancnote folosite iar 
 \begin{center}
 	$n_1 \cdot 1 + n_5 \cdot 5 + n_{10} \cdot 10 + n_{20} \cdot 20 + n_{50} \cdot 50 == suma $.
 \end{center}
 \vspace{0.5cm}
+
+
 \section{Implementarea algoritmului Greedy}
-\subsection{Predicate si functii }
-Inainte de a trece la implementarea propriu-zisa a algoritmului, o sa incep prin a prezenta predicatele care asigura corectitudinea rezultatului intors de catre metoda ce genereaza solutia optima pentru suma pe care trebuie sa o platim. \par 
-Predicatele sunt metode care returneaza o valoare de adevar si sunt folosite pentru a verifica o anumita proprietate sau mai multe prin intermediul unei singure instructiuni.
+\subsection{Predicate și funcții }
+Înainte de a trece la implementarea propriu-zisă a algoritmului, o să încep prin a prezenta predicatele care asigură corectitudinea rezultatului întors de către metoda ce generează soluția optimă pentru suma pe care trebuie să o plătim. \par 
+Predicatele sunt metode care returnează o valoare de adevăr și sunt folosite pentru a verifică o anumită proprietate sau mai multe prin intermediul unei singure instrucțiuni.
 \par
-In Dafny, functiile sunt asemanatoare cu functiile matematice. Functiile contin o singura expresie care returneaza o valoare de tipul declarat in antetul functiei.
+În Dafny, funcțiile sunt asemănătoare cu funcțiile matematice. Funcțiile conțin o singură expresie care returnează o valoare de tipul declarat in antetul funcției.
+
+
 \par
 \begin{enumerate}
-	\item Predicatul $esteSolutieValida(solutie : seq<int>)$ $\rightarrow$ acest predicat ne asigura ca solutia primita ca parametru este de lungime 5 si ca fiecare element este mai mare sau egal cu 0. Conditii mentionate anterior sunt foarte importante deoarece, avand 5 bancnote (1, 5, 10, 20, 50), inseamna ca va trebuie sa existe un elemnt al solutiei pentru fiecare dintre ele.
+	\item Predicatul $esteSolutieValida(solutie : seq<int>)$ $\rightarrow$ acest predicat ne asigură că soluția primită ca parametru este de lungime 5 și că fiecare element este mai mare sau egal cu 0. Condiții menționate anterior sunt foarte importante deoarece, având 5 bancnote (1, 5, 10, 20, 50), înseamnă că va trebuie să existe un elemnt al soluției pentru fiecare dintre ele.
 	\par 
 \begin{lstlisting}
 	predicate esteSolutieValida(solutie : seq<int>)
@@ -47,7 +51,7 @@ In Dafny, functiile sunt asemanatoare cu functiile matematice. Functiile contin 
 		|solutie| == 5 && solutie[0] >= 0 && solutie[1] >= 0 && 	solutie[2] >= 0 && solutie[3] >=0 && solutie[4] >=0
 	}
 \end{lstlisting}
-\item Predicatul $esteSolutie(solutie : seq<int>, suma : int) \rightarrow$ acest predicat verifica faptul ca suma elementelor secventei $solutie$ inmultime cu bancnotele folosite in problema este egala cu $suma$. Daca cele doua sunt egale, atunci secventa $solutie$ devine solutie posibila pentru $suma$.
+\item Predicatul $esteSolutie(solutie : seq<int>, suma : int) \rightarrow$ acest predicat verifică faptul că suma elementelor secvenței $soluție$ înmulțite cu bancnotele folosite în problemă este egală cu $suma$. Dacă cele două sunt egale, atunci secvență $soluție$ devine soluție posibilă pentru $suma$.
 \begin{lstlisting}
 	predicate esteSolutie(solutie : seq<int>, suma : int)
 		requires esteSolutieValida(solutie)
@@ -56,7 +60,7 @@ In Dafny, functiile sunt asemanatoare cu functiile matematice. Functiile contin 
 	}
 \end{lstlisting}
 \vspace{1.5cm}
-\item Functia $cost(solutie : seq<int>) : int \rightarrow$ aceasta functie calculeaza si returneaza cate bancnote au fost folosite pentru a forma solutia posibila memorate in variabila $solutie$ data ca parametru.
+\item Funcția $cost(solutie : seq<int>) : int \rightarrow$ această funcție calculează și returnează câte bancnote au fost folosite pentru a formă soluția posibilă memorată în variabila $solutie$ dată ca parametru.
 \begin{lstlisting}
 	function cost(solutie : seq<int>) : int 
 		requires esteSolutieValida(solutie)
@@ -65,7 +69,7 @@ In Dafny, functiile sunt asemanatoare cu functiile matematice. Functiile contin 
 	}
 \end{lstlisting}
 
-\item Predicatul $ esteSolutieOptima(solutie : seq<int>, suma : int) \rightarrow$ acest predicat va returnat valoarea de adevar daca solutia primita ca parametru este o solutie posibila pentru suma pe  care trebuie sa o platim si orice alta solutie posibila are costul mai mare sau egal. Acest lucru se intampla deoarece Problema Bancnotelor este o problema de minimizare iar solutia trebuie sa aibe costul minim.
+\item Predicatul $ esteSolutieOptima(solutie : seq<int>, suma : int) \rightarrow$ acest predicat va returnat valoarea de adevăr dacă soluția primită ca parametru este o soluție posibilă pentru suma pe  care trebuie să o plătim și orice altă soluție posibilă are costul mai mare sau egal. Acest lucru se întâmplă deoarece Problema Bancnotelor este o problemă de minimizare iar soluția trebuie să aibe costul minim.
 \begin{lstlisting}
 	predicate esteSolutieOptima(solutie : seq<int>, suma : int)
 		requires esteSolutieValida(solutie)
@@ -76,7 +80,7 @@ In Dafny, functiile sunt asemanatoare cu functiile matematice. Functiile contin 
 	}
 \end{lstlisting}
 
-\item Predicatul $  INV(rest : int, suma : int, solutieFinala : seq<int>) \rightarrow$ acest predicat va fi adevarat daca orice solutie care este valida este si solutie posibila pentru $rest$ (suma care ne-a ramas de platit) atunci suma dintre aceasta solutie si cea data ca parametru trebuie sa fie solutie posibila pentru suma totala care trebuie platita. Similar se intampla si pentru a demosntra ca suma celor doua solutii este solutie optima pentru suma.
+\item Predicatul $  INV(rest : int, suma : int, solutieFinala : seq<int>) \rightarrow$ acest predicat va fi adevărat dacă orice soluție care este validă este și soluție posibilă pentru $rest$ (suma care ne-a rămas de plătit) atunci suma dintre această soluție și cea dată ca parametru trebuie să fie soluție posibilă pentru suma totală care trebuie plătită. Similar se întâmplă și pentru a demosntra că suma celor două soluții este soluție optimă pentru $suma$.
 \begin{lstlisting}
 	predicate INV(rest : int, suma : int, solutieFinala : seq<int>)
 		requires esteSolutieValida(solutieFinala)
@@ -160,11 +164,11 @@ method nrMinimBancnote(suma : int) returns (solutie : seq<int>)
 }
 \end{lstlisting}
 \par 
-Algoritmul propus de mine primeste ca parametru suma pe care va trebui sa o platim si returneaza o solutie care respecta proprietatile discutate mai sus in sectiunea $4.1.2 \ Descrierea \ \ solutiei \ \ rezultate $.
+Algoritmul propus de mine primește ca parametru suma pe care va trebui să o plătim și returnează o soluție care respectă proprietățile discutate mai sus în secțiunea $4.1.2 \ Descrierea \ \ soluției \ \ rezultate $.
 \par 
-Preconditiile sunt expresii booleene care trebuie sa fie adevarate pentru variabilele date ca parametru, in timp ce postconditiile trebuie sa fie adevarate pentru variabilele returnate de metoda. Acestea sunt adaugate la inceputul metodei pentru a determina o buna functionare a programului si totodata corectitudinea acestuia.
+Preconditiile sunt expresii booleene care trebuie să fie adevărate pentru variabilele date ca parametru, în timp ce postconditiile trebuie să fie adevărate pentru variabilele returnate de metodă. Acestea sunt adăugate la începutul metodei pentru a determina o bună funcționare a programului și totodată corectitudinea acestuia.
 \par 
-Preconditia $requires \ \ suma >= 0$ ne indica faptul ca suma trebuie sa fie mai mare sau egala cu 0 pentru a se putea parcurge metoda.\par 
+Preconditia $requires \ \ suma >= 0$ ne indică faptul că suma trebuie să fie mai mare sau egală cu 0 pentru a se putea realiza metoda.\par 
 \vspace{0.5cm}
 \begin{lstlisting}
 	ensures esteSolutieValida(solutie) 
@@ -175,14 +179,14 @@ Preconditia $requires \ \ suma >= 0$ ne indica faptul ca suma trebuie sa fie mai
 
 \par
 \vspace{0.25cm}
-Aceste trei postconditii se focuseaza pe solutia returnata de metoda. Solutia trebuie sa fie valida, sa fie o solutie posibila pentru suma care trebuie platita si totodata sa fie si solutie oprima pentru aceasta.
+Aceste trei postconditii se focusează pe soluția returnată de metodă. Soluția trebuie să fie valida, să fie o soluție posibilă pentru suma care trebuie plătită și totodată să fie și soluție oprimă pentru aceasta.
 \par 
-Dupa indeplinirea cu succes a preconditiilor si a postconditiilor cerute, vom intra in corpul metodei. \par 
-La inceput, vom declara 5 variabile $s_1, s_5 , s_{10}, s_{20}, s_{50}$ pe care le initializam cu valoarea 0. Aceste variabile vor memora cate bancnote din fiecare tip sunt folosite. \par 
-In bucla $while$ se va calcula, la fiecare pas, cu ajutorul uneii metode $gasireMaxim(rest)$ valoarea bancnotei maxime care este mai mica sau egala cu $rest$. In functie de valoarea returnata de aceasta metoda, se va incrementa valoarea unei variabilele declarate la inceputul metodei, va scadea valoarea variabilei $rest$ cu valoarea bancnotei alese la pasul curent si se va apela o anumita lemma care ajuta la demonstrarea corectitudinii programului insa voi reveni ulterior la acest aspect.
+După îndeplinirea cu succes a preconditiilor și a postconditiilor cerute, vom intra în corpul metodei. \par 
+La început, vom declara 5 variabile $s_1, s_5 , s_{10}, s_{20}, s_{50}$ pe care le inițializăm cu valoarea 0. Aceste variabile vor memora câte bancnote de fiecare tip sunt folosite. \par 
+În bucla $while$ se va calcula, la fiecare pas, cu ajutorul uneii metodei $gasireMaxim(rest)$ valoarea bancnotei maxime care este mai mică sau egală cu $rest$. În funcție de valoarea returnată de această metodă, se va incrementa valoarea variabilei corespunzătoare declarată la începutul metodei, va scădea valoarea variabilei $rest$ cu valoarea bancnotei alese la pasul curent și se va apela o anumită lemma care ajută la demonstrarea corectitudinii programului însă voi reveni ulterior la acest aspect.
 \par 
 
-Un alt lucru interesant la acest limbaj de programare este prezenta invariantilor la inceputul buclelor. Invariantii sunt, asemenea postconditiilor si preconditiilor, proprietati care trebuie respectate pentru a se realiza cu succes bucla while.
+Un alt lucru interesant la acest limbaj de programare este prezența invariantilor la începutul buclelor. Invarianții sunt, asemenea postconditiilor și preconditiilor, proprietăți care trebuie respectate pentru a se realiza cu succes bucla while.
 
 \vspace{0.5cm}
 \fbox{\parbox{5.5in}{
@@ -194,15 +198,15 @@ Un alt lucru interesant la acest limbaj de programare este prezenta invariantilo
 }
 \par 
 \vspace{0.5cm}
-Acesti invarianti ne indica faptul ca $rest$ isi va schimba valoarea si va descreste dar va fi mereu mai mare decar 0 si mai mica sau egala decat $suma$ si ca solutia creata pana la pasul curent este o solutie posibila pentru $suma-rest$. 
-Totodata, vom folosi predicatul $INV$ pentru a verifica fapul ca solutia noastra este solutie optima. 
+Acești invarianti ne indică faptul că $rest$ își va schimba valoarea și va descrește dar va fi mereu mai mare decât 0 și mai mică sau egală decât $suma$ și că soluția creată până la pasul curent este o soluție posibilă pentru $suma-rest$. 
+Totodată, vom folosi predicatul $INV$ pentru a verifica fapul că soluția noastră este soluție optimă. 
 \par
-\subsection{Leme importante in demonstrarea corectitudinii}
-Lemele sunt metode care sunt folosite pentru a verifica corectitudinea programului. Acestea contin preconditii iar proprietatea care trebuie demonstrata va fi postconditia lemei.\par
-Uneori, lemele pot fi demonstrate de catre Dafny fara a adauga intructiuni, ceea ce inseamna ca un corp fara instructiuni serveste ca argument pentru demonstratie.
+\subsection{Leme importante în demonstrarea corectitudinii}
+Lemele sunt metode care sunt folosite pentru a verifica corectitudinea programului. Acestea conțin precondiții iar proprietatea care trebuie demonstrată va fi postconditia lemei.\par
+Uneori, lemele pot fi demonstrate de către Dafny fără a adăuga instrucțiuni, ceea ce înseamnă că un corp fără instrucțiuni servește că argument pentru demonstrație.
 \par
-In prezentarea agloritmului Greedy creat de mine, in functie de bancnota aleasa, va fi apelata o lema care va verifica daca alegerea facuta va duce la o solutie optima. Spre exemplu, pentru $s = 1$, unde $s$ este valoarea returnata de metoda $gasireMaxim(rest)$, se va apela lema $cazMaxim1$, pentru $s = 5$ se va apela lema $cazMaxim5$, iar acest lucru se intampla pentru fiecare bancnota care este posibil sa fie aleasa. \par 
-In continuare, o sa prezint lemele $cazMaxim1$ si $cazMaxim50$. Primele patru leme, $cazMaxim1$, $cazMaxim5$, $cazMaxim10$, $cazMaxim20$, sunt similare, drep urmare voi prezenta doar lema $cazMaxim1$. Insa, in subsectiunea urmatoare, voi reveni asupra lemelor $cazMaxim10$, $cazMaxim20$ deoarece contin o demonstratie interesanta a unei proprietati.
+În prezentarea agloritmului Greedy creat de mine, în funcție de bancnotă aleasă, va fi apelată o lema care va verifica dacă alegerea făcută va duce la o soluție optimă. Spre exemplu, pentru $s = 1$, unde $s$ este valoarea returnată de metoda $gasireMaxim(rest)$, se va apela lema $cazMaxim1$, pentru $s = 5$ se va apela lema $cazMaxim5$, iar acest lucru se întâmplă pentru fiecare bancnotă existentă în algoritm. \par 
+În continuare, o să prezint lemele $cazMaxim1$ și $cazMaxim50$. Primele patru leme, $cazMaxim1$, $cazMaxim5$, $cazMaxim10$, $cazMaxim20$, sunt similare, drep urmare voi prezenta doar lema $cazMaxim1$. Însă, în subsecțiunea următoare, voi reveni asupra lemelor $cazMaxim10$, $cazMaxim20$ deoarece pentru demonstrarea corectitudinii acestor cazuri a fost nevoie de o abordare diferită.
 \vspace{2.5cm}
 \begin{enumerate}
 \item Lema cazMaxim1(rest : int, suma : int, solutieFinala : seq$<$int$>$) 
@@ -241,15 +245,15 @@ In continuare, o sa prezint lemele $cazMaxim1$ si $cazMaxim50$. Primele patru le
 \end{lstlisting} 
 \setlength{\parindent}{2em}
 \par
-Am creat un forall statement cu ajutorul caruia vom demonstra ca daca vom alege bancnota 1, vom crea o solutie oprima pentru variabila $suma$.
+Am creat un forall statement cu ajutorul căruia vom demonstra că dacă vom alege bancnota de valoare 1, vom crea o soluție oprimă pentru variabila $suma$.
 \par
-Acest lucru il vom demonstra cu ajutorul assert-urilor. Cu ajutorul acestora vom verifica ce "stie" verificatorul Dafny si ce va trebui demonstrat separat cu ajutorul lemelor. 
+Acest lucru îl vom demonstra cu ajutorul assert-urilor. Cu ajutorul acestora vom verifică ce "știe" verificatorul Dafny și ce va trebui demonstrat separat cu ajutorul lemelor. 
 \par
-Forall statement-ul despre care am amintit mai sus va crea o solutie numita $solutieCurenta$ despre care stim ca este o solutie valida si ca este o solutie oprima pentru $rest-1$. 
-Spre exemplu, daca $rest = 4$, $suma = 54$ si $solutieFinala = [0,0,0,0,1]$ solutia aleasa de forall statement va fi $[3,0,0,0,0]$ care este solutie optima pentru 3. \par 
-Atfel, stiind ca $solutieCurenta$ este solutie optima pentru $rest-1$, este evidet ca aceasta este o solutie posibila pentru $rest-1$. Vom incerca sa modificam $solutieCurenta[0]+1$, pentru a crea o solutie posibila pentru $rest$.
+Forall statement-ul despre care am amintit mai sus va crea o soluție numită $solutieCurenta$ despre care știm că este o soluție validă și că este o soluție oprimă pentru $rest-1$. 
+Spre exemplu, dacă $rest = 4$, $suma = 54$ și $solutieFinala = [0,0,0,0,1]$ soluția aleasă de forall statement va fi $[3,0,0,0,0]$ care este soluție optimă pentru 3. \par 
+Atfel, știind că $solutieCurenta$ este soluție optimă pentru $rest-1$, este evidet că aceasta este o soluție posibilă pentru $rest-1$. Vom încerca să modificăm $solutieCurenta[0]+1$, pentru a crea o soluție posibilă pentru $rest$.
 \par 
-Urmatorul pas este sa formam o noua solutie prin adunarea celor doua solutii cunoscute pentru a crea o solutie oprima pentru variabila $suma$: $[solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],solutieFinala[2] + \\ solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] +\\ solutieCurenta[4]]$.
+Următorul pas este să formăm o nouă soluție prin adunarea celor două soluții cunoscute pentru a crea o soluție oprimă pentru variabila $suma$: $[solutieFinala[0] + solutieCurenta[0] + 1, solutieFinala[1] + solutieCurenta[1],solutieFinala[2] + \\ solutieCurenta[2], solutieFinala[3] + solutieCurenta[3], solutieFinala[4] +\\ solutieCurenta[4]]$.
 
 \item Lema cazMaxim50(rest : int, suma : int, solutieFinala : seq$<$int$>$)
 \par 
@@ -309,37 +313,30 @@ lemma cazMaxim50(rest : int, suma : int, solutieFinala : seq<int>)
 }
 \end{lstlisting}
 \par 
-Acesta lema are rolul de a demonstra ca prin alegerea bancnotei de 50 se va crea o solutie optima pentru $suma$.
+Acesta lemă are rolul de a demonstra că prin alegerea bancnotei de 50 se va crea o soluție optimă pentru $suma$.
 \par 
-Ceea ce stim este ca pentru orice solutie valida si posibila pentru $rest$, suma acesteia cu $solutieFinala$ va fi solutie pentru $suma$. Astfel,folosind un forall statement vom demonstra ca pentru orice $solutieCurenta$ care este solutie posibila pentru $rest-50$, suma acesteia cu $solutieFinala$ va crea o solutie pentru $suma$. \par 
-// de reformulat
+Știm că pentru orice soluție validă și posibilă pentru $rest$, suma dintre această soluție și $solutieFinala$ va fi o soluție posibilă pentru $suma$. Astfel, folosind un forall statement vom demonstra, similiar ca în cazul precedent, că prin însumarea secevetei $solutieFinala$ cu orice altă secvență $solutieCurenta$, care este soluție posibilă pentru $rest-50$,  vom crea o nouă soluție posibilă pentru $suma$.
 \par
-Urmatorul lucru care trebuie sa il demonstram este ca suma elementelor celor doua solutii este solutie optima pentru $suma$. Pentru aceasta demonstratie, am folosit un exchange argument pe care il voi prezenta in subsectiunea urmatoare.
-
-
-
-
-%$([solutieFinala[0] + $ \par $solutieCurenta[0], solutieFinala[1] + solutieCurenta[1], solutieFinala[2] + $\par$ solutieCurenta[2], 
-%solutieFinala[3] + solutieCurenta[3], 1 + solutieFinala[4] +$ \par $ solutieCurenta[4]])$
+Următorul lucru care trebuie să îl demonstrăm este că suma elementelor celor două soluții este soluție optimă pentru $suma$. Pentru această demonstrație, am folosit un exchange argument pe care îl voi prezența în subsecțiunea următoare.
 
 
 
 \end{enumerate}
 
 \subsection{Exchange Arguments}
-Exchange arguments este o tehnica folosita pentru a demonstra optimitatea unei solutii. Tehnica presupune modificarea unei solutii oarecare pentru a obtine o solutie optima pentru agloritmul greedy fara a-i modifica costul.\par 
-Dupa cum am mentionat anterior, pentru lemele $cazMaxim10$,$cazMaxim20$ si $cazMaxim50$ demonstrarea faptului ca suma dintre $solutieCurenta$ si $solutieFinala$ este solutie optima pentru $suma$ nu a mers inductiv ca in celalte leme, asa ca va trebui "sa ajutam" verificatorul Dafny.\par 
-In programul scris de mine, exista doua situatii in care intervine folosirea acestei tehnici: 
+Exchange arguments este o tehnică folosită pentru a demonstra optimitatea unei soluții. Tehnica presupune modificarea unei soluții oarecare cu scopul de a obține o soluție optimă pentru agloritmul greedy fără a-i modifica costul.\par 
+După cum am menționat anterior, pentru lemele $cazMaxim10$,$cazMaxim20$ și $cazMaxim50$ demonstrarea faptului că suma dintre $solutieCurenta$ și $solutieFinala$ este soluție optimă pentru $suma$ nu a mers "de la sine"ca în celalte leme, așa că va trebui "să ajutăm" verificatorul Dafny.\par 
+În programul scris de mine, există două situații în care intervine folosirea acestei tehnici: 
 \begin{itemize}
-	\item variabila $rest$ apartine unui interval, cum ar fi $10 <= rest <20 $ si $20 <= rest < 50$
-	\item variabila $rest$ are doar limita inferioara, cum ar fi $rest >= 50$.
+	\item variabila $rest$ aparține unui interval, cum ar fi $10 <= rest <20 $ si $20 <= rest < 50$
+	\item variabila $rest$ are doar limită inferioară, cum ar fi $rest >= 50$.
 \end{itemize}
 \par 
-In ceea ce urmeaza o sa prezint cate un caz din fiecare situatie. 
+În ceea ce urmează o să prezint câte un caz din fiecare situație. 
 \par
 \vspace{2cm}
 \begin{enumerate}
-\item Situatia in care variabila $10 <= rest <20$ este reprezentata de lema exchangeArgumentCaz10(rest : int, solutieCurenta : seq$<$int$>$)
+\item Situația în care variabila $10 <= rest <20$ este reprezentată de lema exchangeArgumentCaz10(rest : int, solutieCurenta : seq$<$int$>$)
 \par 
 	
 \begin{lstlisting}
@@ -393,17 +390,17 @@ lemma exchangeArgumentCaz10(rest : int, solutieCurenta : seq<int>)
 \end{lstlisting}
 \setlength{\parindent}{2em}
 \par
-Cu ajutorul acestei leme vom demonstra faptul ca solutia curenta construita astfel $[solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3],$ \ $ solutieCurenta[4]]$ este solutie optima pentru variabila $rest$.\par
-Pentru a demonstra acest lucru, vom crea o noua solutie numita $solutieOptima$ care are cost mai mic decat solutia curenta. Stim deja ca elementele \\ $solutieOptima[3]==0$ si $solutieOptima[4]==0$ asa ca ne putem concentra atentia pe primele 3 elemente ale solutiei. \par
-In cele ce urmeaza, vom cauta toate combinatiile din numere 1, 5 si 10 a caror suma este 10. Pentru fiecare combinatie se va crea o noua solutie $solutieOprima'$ astfel: se va scadea cate o bancnota cu valoarea respectiva din $solutieOptima$  pana cand suma acestora va fi 10. \par
-De exemplu, pentru cazul $1+1+1+1+1+5=10$ noua solutie va fi $var solutieOptima' := [solutieOptima[0] - 5, solutieOptima[1] - 1, solutieOptima[2], \\ solutieOptima[3], solutieOptima[4]]$, cu alte cuvinte am scazut 5 bancnote de valoare 1 si o bancnota de valoare 5. \par
-Stiind ca am scazut $n$ bancnote din $solutieOptima$ pentru a crea $solutieOptima'$ costul acesteia va fi $cost(solutieOptima) - n$, iar incercand sa comparam acest cost cu costul solutiei curente vom ajunge la o contradictie.
+Cu ajutorul acestei leme vom demonstra faptul că soluția curentă construită astfel $[solutieCurenta[0], solutieCurenta[1], solutieCurenta[2] + 1, solutieCurenta[3],$ \ $ solutieCurenta[4]]$ este soluție optimă pentru variabila $rest$.\par
+Pentru a demonstra acest lucru, vom crea o nouă soluție numită $solutieOptima$ care are cost mai mic decât soluția curentă. Știm deja că elementele \\ $solutieOptima[3]==0$ și $solutieOptima[4]==0$ așa că ne putem concentra atenția pe primele 3 elemente ale soluției. \par
+În cele ce urmează, vom căuta toate combinațiile formate din numerele 1, 5 și 10 a căror sumă este 10. Pentru fiecare combinație se va crea o nouă soluție $solutieOprima'$ astfel: se vor scădea bancnotele cu valoarea respectivă din \\ $solutieOptima$. \par
+De exemplu, pentru cazul $1+1+1+1+1+5=10$ noua soluție va fi $var solutieOptima' := [solutieOptima[0] - 5, solutieOptima[1] - 1, solutieOptima[2], \\ solutieOptima[3], solutieOptima[4]]$, cu alte cuvinte am scăzut 5 bancnote de valoare 1 și o bancnotă de valoare 5. \par
+Știind că am scăzut $n$ bancnote din $solutieOptima$ pentru a crea $solutieOptima'$ costul acesteia va fi $cost(solutieOptima) - n$, iar încercând să comparăm acest cost cu costul soluției curente vom ajunge la o contradicție.
 \vspace{1cm}
-\item Situatia in care variabila $ rest <= 50$ este reprezentata de lema exchangeArgumentCaz50(rest : int, suma : int, solutieOarecare : seq$<$int$>$, solutieCurenta : seq$<$int$>$)
+\item Situația în care variabila $ rest <= 50$ este reprezentată de lema exchangeArgumentCaz50(rest : int, suma : int, solutieOarecare : seq$<$int$>$, solutieCurenta : seq$<$int$>$)
 \par 
-Codul pentru aceasta lema este foarte lung si nu il voi insera pe tot in acest document. Voi prezenta anumite instructiuni care au o importanta deosebita, iar secventele repetitive le voi inlocui cu un comentariu sugestiv.
+Codul pentru această lema este foarte lung și nu îl voi insera pe tot în acest document. Voi prezența anumite instrucțiuni care au o importantă deosebită, iar secvențele repetitive le voi înlocui cu un comentariu sugestiv.
 \par 
-Acesta lema are drept scop demonstrarea faptului ca variabila $solutieCurenta$ are un cost mai mic decat costul variabilei $solutieOarecare$.
+Acesta lemă are drept scop demonstrarea faptului că variabila $solutieCurenta$ are un cost mai mic decât costul variabilei $solutieOarecare$.
 
 \begin{lstlisting}
 assert esteSolutie(solutieOarecare, rest);
@@ -443,51 +440,32 @@ if(cost(solutieOarecare) < cost([solutieCurenta[0], solutieCurenta[1], solutieCu
 
 \end{lstlisting}
 \par
-Incepem demonstratia prin a verifica daca $solutieOarecare$ are costul mai mic decat  $cost(solutieCurenta)$. In caz afirmativ, vom incepe sa comparam elementele din cele doua solutii: $solutieOarecare[4] > solutieCurenta[4] + 1$ ,\\ $solutieOarecare[3] > solutieCurenta[3]$, $solutieOarecare[2] > solutieCurenta[2]$, $solutieOarecare[1] > solutieCurenta[1]$ si $solutieOarecare[0] > solutieCurenta[0]$.  \par   
-Secventa de cod adaugata mai sus contine doar compararea elementelor de pe pozitia 4 deoarece aceasta este cea mai complexa parte. \par
-Daca $solutieOarecare[4] > solutieCurenta[4] + 1$  atunci solutia \\ $[solutieOarecare[0], solutieOarecare[1], solutieOarecare[2], solutieOarecare[3], \\ solutieOarecare[4] - 1]$ are costul mai mic decat costul solutiei curente si este solutie optima pentru $rest-50$, lucru care este fals.\par
-In schimb, daca $solutieOarecare[4] < solutieCurenta[4] + 1$ vom crea o noua solutie numita $nouaSolutieOarecare$ formata din elementele secventei $solutieOarecare$ din care am scazut bancnotele a caror suma este egala cu 50 si am incrementat valoarea elementului de pe pozitia 4, apoi, cu ajutorul unui apel recursiv, vom compara $nouaSolutieOarecare$ cu $solutieCurenta$ pana cand acestea vor fi egale.\par
-Similar se intampla si cu celelalte trei comparatii pe care le-am enumerat mai sus. Se vor crea noi solutii pana cand elementele din $solutieOarecare$ si $solutieCurenta$ vor fi egale.
+Începem demonstrația prin a verifica dacă $solutieOarecare$ are costul mai mic decât $cost(solutieCurenta)$. În caz afirmativ, vom începe să comparăm elementele din cele două soluții: $solutieOarecare[4] > solutieCurenta[4] + 1$ ,\\ $solutieOarecare[3] > solutieCurenta[3]$, $solutieOarecare[2] > solutieCurenta[2]$, $solutieOarecare[1] > solutieCurenta[1]$ și $solutieOarecare[0] > solutieCurenta[0]$.  \par   
+Secventa de cod adăugată mai sus conține doar compararea elementelor de pe poziția 4 deoarece această este cea mai complexă parte. \par
+Dacă $solutieOarecare[4] > solutieCurenta[4] + 1$  atunci soluția \\ $[solutieOarecare[0], solutieOarecare[1], solutieOarecare[2], solutieOarecare[3], \\ solutieOarecare[4] - 1]$ are costul mai mic decât costul soluției curente și este soluție optimă pentru $rest-50$, lucru care este fals.\par
+În schimb, dacă $solutieOarecare[4] < solutieCurenta[4] + 1$ vom crea o nouă soluție numită $nouaSolutieOarecare$ formată din elementele secvenței $solutieOarecare$ din care am scăzut bancnotele a căror sumă este egală cu 50 și am incrementat valoarea elementului de pe poziția 4, apoi, cu ajutorul unui apel recursiv, vom compara $nouaSolutieOarecare$ cu $solutieCurenta$ până când acestea vor fi egale.\par
+Similar se întâmplă și cu celelalte trei comparații pe care le-am enumerat mai sus. Se vor crea noi soluții până când elementele din $solutieOarecare$ și $solutieCurenta$ vor fi egale.
 \end{enumerate}
 \vspace{1cm}
 
 
 
 \section{Probleme "interesante" intalnite}
-Pe parcursul realizarii acestui algoritm si a demonstrarii corectitudinii sale am intampinat mai multe probleme care m-au pus in dificultate. \par  
-Problema care m-a "incurcat" am intampinat-o la lema exchangeArgumentCaz50(rest: int, suma : int, solutieOarecare : seq$<$int$>$, solutieCurenta : seq$<$int$>$). Dupa cum am prezentat anterior, pentru a demonstra ca $solutieOarecare[4] == solutieCurenta[4] + 1$, cu alte cuvinte, daca ambele solutii contineau acelasi numar de bancnote de valoare 50, a trebuit sa caut toate combinatiile de valori de 1,5,10 si 20 a caror suma este 50 si sa creez o noua solutie. \par 
+Pe parcursul realizării acestui algoritm și a demonstrării corectitudinii sale am întâmpinat mai multe probleme care m-au pus în dificultate. \par  
+Problema care m-a "încurcat" cel mai mult am întâmpinat-o la lema exchangeArgumentCaz50(rest: int, suma : int, solutieOarecare : seq$<$int$>$, solutieCurenta : seq$<$int$>$). După cum am prezentat anterior, pentru a demonstra că $solutieOarecare[4] == solutieCurenta[4] + 1$, cu alte cuvinte, dacă ambele soluții conțineau același număr de bancnote de valoare 50, a trebuit să caut toate combinațiile de valori de 1,5,10 și 20 a căror suma este 50 și să creez o nouă soluție. \par 
 \begin{itemize}
-	\item Problema 1: Dupa ce am adaugat in lema toate cele 53( !! de verificat) de cazuri posibile, lema nu putea sa demonstreze ca $solutieOarecare[4] == solutieCurenta[4] \\ + 1$, ceea ce insemna ca imi lipseste un caz.\par
-	Rezulvarea problemei 1: In ultima instructiune $else$ am adaugat cateva assert-uri pentru a afla ce caz sau cazuri am ratat. Spre surprinderea mea,\\ $solutieOarecare[0]==solutieOarecare[1]==solutieOarecare[2]==0$ iar \\ $solutieOarecare[3]==3$  asta insemna ca aveam 60 de lei formati din 3 bancnote de 20 de lei.
-	\item Problema 2: Cum as putea sa tratez acest caz?\par 
-	Incercarea 1: Am incercat sa verific daca $solutieOarecare[3]>=5$ astfel incat sa pot adauga 2 bancnote de 50 de lei $solutieOarecare[4]+2$ $\rightarrow$ eroare: $solutieOarecare[3]$ nu este mai mare sau egal cu 5.\par
-	Incercarea 2: Am incercat sa verific daca $ solutieOarecare[0]+ 5 \cdot solutieOarecare[1]+10\cdot solutieOarecare[2] >=100$ pentru a putea adauga valoarea 5 la $solutieOarecare[3]$ si sa pot reveni la ideea de la "Incercarea 1" $\rightarrow$ eroare: suma elementelor nu este mai mare sau egala cu 100. \par
-	Incercare 3: Am incercat sa tratez cazul astfel: cele 3 bancnote de 20 le voi transforma intr-o bancnota de 50 iar bancnota de 10 ramasa o voi aduna la celalate pe care le am in solutie, astfel, creand o noua solutie cu un cost mai mic \\
+	\item Problema 1: După ce am adăugat în lemă toate cele 56 de cazuri posibile, lema nu putea să demonstreze că $solutieOarecare[4] == solutieCurenta[4] \\ + 1$, ceea ce însemna că îmi lipsește un caz.\par
+	Rezulvarea problemei 1: În ultima instrucțiune $else$ am adăugat câteva assert-uri pentru a afla ce caz sau cazuri am ratat. Spre surprinderea mea,\\ $solutieOarecare[0]==solutieOarecare[1]==solutieOarecare[2]==0$ iar \\ $solutieOarecare[3]==3$  asta însemna că aveam 60 de lei formați din 3 bancnote de 20 de lei.
+	\item Problema 2: Cum aș putea să tratez acest caz?\par 
+	Încercarea 1: Am încercat să verific dacă $solutieOarecare[3]>=5$ astfel încât să pot adaugă 2 bancnote de 50 de lei $solutieOarecare[4]+2$ $\rightarrow$ eroare: $solutieOarecare[3]$ nu este mai mare sau egal cu 5.\par
+	Încercarea 2: Am încercat să verific dacă $ solutieOarecare[0]+ 5 \cdot solutieOarecare[1]+10\cdot solutieOarecare[2] >=100$ pentru a putea adaugă valoarea 5 la $solutieOarecare[3]$ și să pot reveni la ideea de la "Încercarea 1" $\rightarrow$ eroare: suma elementelor nu este mai mare sau egală cu 100. \par
+	Încercare 3: Am încercat să tratez cazul astfel: cele 3 bancnote de 20 le voi transforma într-o bancnotă de 50 iar bancnota de 10 lei rămasă o voi aduna la celalate pe care le am în soluție, astfel, creând o nouă soluție cu un cost mai mic \\
 	($nouaSolutieOarecare := [solutieOarecare[0], solutieOarecare[1], solutieOarecare[2] \\ + 1, solutieOarecare[3] - 3, solutieOarecare[4] + 1]$) $\rightarrow$ eroare: "decreases clase might not decrease"
-	\item Problema 3: Eroarea "decrease clase might not decrease" aparuse deoarece in adnotatiile lemei initial exista $decreases \ solutieOarecare[0], solutieOarecare[1],\\ solutieOarecare[2],solutieOarecare[3]$ ceea ce ne asigura ca elementele secventei $solutieOarecare$ vor descreste. In incercarea mea de a trata cazul ramas, incercam sa adaug "restul" in $solutieOarecare[2]$ si incalcam adnotarea specificata mai sus.
+	\item Problema 3: Eroarea "decreases clase might not decrease" apăruse deoarece în adnotările lemei inițial exista $decreases \ solutieOarecare[0], solutieOarecare[1],\\ solutieOarecare[2],solutieOarecare[3]$ ceea ce ne asigura că elementele secvenței $solutieOarecare$ vor descrește. În încercarea mea de a trata cazul rămas, voiam să adaug "restul" în $solutieOarecare[2]$ și încălcam adnotarea specificată mai sus.
 	\par 
-	Rezolvarea problemei 2: Cum scopul pricipal al lemei era de a demonstra ca $solutieCurenta$ are cost minim am modificat adnotarea astfel $decreases  \\ solutieOarecare[0] + solutieOarecare[1] + solutieOarecare[2] + solutieOarecare[3]$ deoarece este suficient sa descreasca suma acestora pentru a ajunge la o solutie cu cost mai mic.
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	Rezolvarea problemei 2: Cum scopul pricipal al lemei era de a demonstra că $solutieCurenta$ are cost minim am modificat adnotarea astfel $decreases  \\ solutieOarecare[0] + solutieOarecare[1] + solutieOarecare[2] + solutieOarecare[3]$ deoarece este suficient să descrească suma acestora pentru a ajunge la o soluție cu cost mai mic.
+		
 \end{itemize}
-
-
-
-
-
-
-
-
 
 
 

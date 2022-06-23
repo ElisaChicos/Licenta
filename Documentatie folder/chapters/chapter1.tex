@@ -1,83 +1,80 @@
 \chapter{Paradigma Greedy}
- Greedy este o strategie de rezolvare a problemelor de optimizare. Metoda presupune luarea unei decizii definitive la fiecare pas in functie de informatiile cunoscute in prezent fara a ne ingrijora de efectul acesteia in viitor.
+Greedy este o strategie de rezolvare a problemelor de optimizare. Metoda presupune luarea unei decizii definitive la fiecare pas în funcție de informațiile cunoscute în prezent fără a ne îngrijora de efectul acesteia în viitor.
 
 
-\section{Ce este o problema de optimizare si cum lucreaza metoda Greedy cu aceasta?}
+\section{Ce este o problemă de optimizare și cum lucrează metodă Greedy cu aceasta?}
 
-O problema de optimizare este o problema care are un input oarecare dar output-ul ei trebuie sa fie o valoare maxima sau minima.
-In functie de ce ne cere problema, aceasta poate fi de doua feluri: 
+O problemă de optimizare este o problema care are un input oarecare dar output-ul ei trebuie să fie o valoare maximă sau minimă.
+În funcție de ce ne cere problema, această poate fi de două feluri: 
 \begin{enumerate}
-\item Problema de minimizare 
-\par
-\fbox{\parbox{5.5in}{// de revenit }}
-\par
- %Scopul acestei probleme este de a gasi valoarea care rezolva problema si are cost minim
-\item Problema de maximizare
-\par
- \fbox{\parbox{5.5in}{// de revenit}}
+	\item Problema de minimizare 
+	\par
+	\fbox{\parbox{5.5in}{// de revenit }}
+	\par
+	%Scopul acestei probleme este de a găși valoarea care rezolvă problema și are cost minim
+	\item Problema de maximizare
+	\par
+	\fbox{\parbox{5.5in}{// de revenit}}
 \end{enumerate}
 
- In functie de decizia facuta de metoda Greedy, vom crea solutii posibile. O solutie posibila este o submultime care satisface cerintele problemei, in timp ce o solutie optima respecta cerintele date si are cost minim sau castig maxim.
-  \par 
-  Dacă mai multe soluții îndeplinesc criteriile date, atunci acele soluții vor fi considerate ca fiind posibile, in timp ce solutia optima este cea mai buna dintre toate solutiile.
-  \par 
-  Drept urmare, aceasta metoda este folosita pentru a determina
-  solutia oprima si a rezolva corect problema de optimizare.
+În funcție de decizia făcută de metoda Greedy, vom crea soluții posibile. O soluție posibilă este o submultime care satisface cerințele problemei, în timp ce o soluție optimă respectă cerințele date și are cost minim sau câștig maxim.
+\par 
+Dacă mai multe soluții îndeplinesc criteriile date, atunci acele soluții vor fi considerate ca fiind posibile, în timp ce soluția optimă este cea mai bună dintre toate soluțiile.
+\par 
+Drept urmare, această metodă este folosită pentru a determina
+soluția oprimă și a rezolva corect problema de optimizare.
 
 
 \section{Algoritmi Greedy}
-	\subsection{Problema selectiei activitatilor}	
-	Problema activitatilor este o problema de maximizare care presupune alegerea cat mai multor activitati care pot fi realizate intr-un anumit interval de timp fara ca acestea sa se suprapuna.
+\subsection{Problema Selecției Activităților}	
+Problema activităților este o problemă de maximizare care presupune alegerea cât mai multor activități care pot fi realizate într-un anumit interval de timp fără că acestea să se suprapună.
 \vspace{0.5cm}
 \par	 
-O posibila formulare a acestei probleme este: \par
+O posibilă formulare a acestei probleme este: \par
 \fbox{\parbox{5.5in}
 	{
 		\setlength{\parindent}{0em}
 		Input: \par
 		\setlength{\parindent}{2em}
-		$\bullet$ n - numarul de activitati,
-		 \par 
+		$\bullet$ n - numărul de activități,
+		\par 
 		
-		$\bullet$ aStart[0..n-1] - vector care contine timpul la care incep activitatile, 
-		 \par
-		 $\bullet$ aSfarsit[0..n-1] - vector ce contine timpul la care se termina actvitatile \par astfel incat aStart[i] $<$ aSfarsit[i] pentru orice 0 $\leq$ i $\leq$ n-1
-		 \setlength{\parindent}{0em}
-		 \par
-		 Output:\par
-		 \setlength{\parindent}{2em}
-		  $\bullet$ A $\subseteq$ $\{$ 0, ..., n-1 $\}$, unde A este o multime de activitati care nu se\par suprapun si este de cardinal maxim;
-	}}
+		$\bullet$ aStart[0..n-1] - vector care conține timpul la care încep activitățile, 
+		\par
+		$\bullet$ aSfarsit[0..n-1] - vector ce conține timpul la care se termină actvitatile \par astfel încât aStart[i] $<$ aSfarsit[i] pentru orice 0 $\leq$ i $\leq$ n-1
+		\setlength{\parindent}{0em}
+		\par
+		Output:\par
+		\setlength{\parindent}{2em}
+		$\bullet$ A $\subseteq$ $\{$ 0, ..., n-1 $\}$, unde A este o mulțime de activități care nu se\par suprapun și este de cardinal maxim;
+}}
 
 \par
 \vspace{1cm}
-Spre exmplu putem avea aceste multimi de activitati reprezentate in tabelul de mai jos:
+Spre exmplu putem avea această mulțime de activități reprezentate în tabelul de mai jos:
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{||c c c c||} 
 		\hline
-		Nr & Activitate & Inceput & Final \\ [1ex] 
+		Nr & Activitate & Început & Final \\ [1ex] 
 		\hline\hline
 		1 & Curs ML & 8 & 10\\ \hline
 		2 & Seminar AI & 10 & 12 \\\hline
 		3 & Curs Pian & 11 & 1 \\\hline
-		4 & Antrenament Inot & 12 & 17 \\ \hline
+		4 & Antrenament Înot & 12 & 17 \\ \hline
 		5 & Curs CN & 16 & 18 \\\hline
-		6 & Consultatii RPA & 17 & 19 \\ \hline
+		6 & Consultații RPA & 17 & 19 \\ \hline
 		7 & Laborator CN & 18 & 20 \\ [1ex] 
 		\hline
 	\end{tabular}
 \end{table}
 \par
-Solutia optima este $A = \{1, 2, 4, 6  \} $
+Soluția optimă este $A = \{1, 2, 4, 6  \} $
 
 
 \subsection{Problema Codurilor Huffman}
 \subsection{Problema Bin-packing}
 \subsection{Algoritmul Dijkstra}
-\subsection{Problema arborelui partial de cost minim}
+\subsection{Problema arborelui parțial de cost minim}
 
-\section{Avantaje si dezavantaje ale algoritmilor Greedy}				
-
-
-
+\section{Avantaje și dezavantaje ale algoritmilor Greedy}				
